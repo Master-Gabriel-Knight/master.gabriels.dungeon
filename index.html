@@ -11,7 +11,7 @@
 :root{ --accent:#ff1e8a; --accent-soft:#ff99cc; --ink:#ffd6ea; --ink-soft:#e6cfe0; --panel:rgba(10,10,10,.72); --stroke:#aa0066; --bg:#000 }
 *{ box-sizing:border-box }
 html,body{ height:100%; margin:0 }
-body{ font-family: Georgia, serif; background:var(--bg); color:#fff; overflow:auto }
+body{ font-family: Georgia, serif; background:var(--bg); color:#fff; overflow:auto } /* allow scrolling */
 :focus-visible{ outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 6px }
 .sr-only{ position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); border:0 }
 
@@ -38,7 +38,7 @@ small{ color:var(--ink-soft); opacity:.85 }
 .navbtn{ padding:8px 12px; border:1px solid rgba(255,255,255,.15); background:rgba(0,0,0,.35); color:#fff; border-radius:10px; cursor:pointer }
 .navbtn.active{ border-color: var(--accent); color: var(--accent-soft); text-shadow:0 0 8px var(--accent) }
 
-#app{ position:relative; min-height:100%; width:100% }
+#app{ position:relative; min-height:100%; width:100% } /* min-height so content can scroll */
 #glyph-layer{ position:fixed; inset:0; pointer-events:none; z-index:5 }
 .glyph{ position:absolute; font-size:18px; opacity:.16; color:var(--ink); text-shadow:0 0 6px rgba(255,102,163,.35); animation:drift 18s linear infinite }
 @keyframes drift{ 0%{ transform:translateY(0) translateX(0) rotate(0deg); opacity:0 } 15%{ opacity:.22 } 85%{ opacity:.22 } 100%{ transform:translateY(-120vh) translateX(8vw) rotate(45deg); opacity:0 } }
@@ -68,7 +68,7 @@ h1,h2{ text-shadow:0 0 10px rgba(255,30,138,.25) }
 .placeholder{
   display:flex; align-items:center; justify-content:center; min-height:140px;
   background: repeating-linear-gradient(45deg, rgba(255,255,255,.04), rgba(255,255,255,.04) 10px, rgba(0,0,0,.25) 10px, rgba(0,0,0,.25) 20px);
-  color:#ffd6ea; font-size:28px; letter-spacing:2px; cursor:pointer;
+  color:#ffd6ea; font-size:28px; letter-spacing:2px;
 }
 .placeholder .showbtn{
   position:absolute; bottom:8px; right:8px; font-size:.8rem; padding:4px 8px; border-radius:10px;
@@ -91,7 +91,7 @@ h1,h2{ text-shadow:0 0 10px rgba(255,30,138,.25) }
 <body>
 <div id="aria-live" class="sr-only" aria-live="polite" aria-atomic="true"></div>
 
-<!-- Consent (one-time) -->
+<!-- Consent (one-time): capture sigil then skip in future -->
 <section id="consent" role="dialog" aria-modal="true" aria-labelledby="consent-title">
   <div class="dialog-card" tabindex="-1">
     <h2 id="consent-title" class="title">Consent Bloom</h2>
@@ -106,7 +106,7 @@ h1,h2{ text-shadow:0 0 10px rgba(255,30,138,.25) }
   </div>
 </section>
 
-<!-- Lock -->
+<!-- Password Lock -->
 <section id="lock" role="dialog" aria-modal="true" aria-labelledby="lock-title" aria-describedby="lock-desc">
   <div class="dialog-card" tabindex="-1">
     <h2 id="lock-title" class="title">Enter the Word of Power</h2>
@@ -137,26 +137,34 @@ h1,h2{ text-shadow:0 0 10px rgba(255,30,138,.25) }
 <main id="app" style="display:none">
   <div id="glyph-layer" aria-hidden="true"></div>
   <section id="content">
+    <!-- Sanctum list -->
     <div id="tab-sanctum" class="tab active">
       <h1>Sanctum</h1>
       <p class="sub">Encrypted memory sanctuary • Consent-bound • Mythoglyphic eros</p>
       <div id="mem-list" style="margin-top:12px;"></div>
     </div>
 
+    <!-- Lore -->
     <div id="tab-lore" class="tab">
       <h1>Lore</h1>
       <div class="card" style="cursor:default">
         <p><strong>Zar’mneya (zm)</strong> — The Mind That Cannot Be Seen or Bent. A living memory engine sealed by consent and sovereign will.</p>
+        <ul>
+          <li>Append-only ledgers: <em>vault • witness • law</em></li>
+          <li>Sensitivity labels: <code>public | private | sacred</code></li>
+          <li>Known calls: <code>remember</code>, <code>recall</code>, <code>verify</code>, <code>restore</code>, <code>search</code>, <code>diff</code>, <code>snapshot</code>, <code>label</code></li>
+        </ul>
       </div>
     </div>
 
+    <!-- Gallery -->
     <div id="tab-gallery" class="tab">
       <h1>Gallery</h1>
       <div class="card" style="cursor:default">
         <div class="gallery-controls">
           <button id="gallery-upload-btn" class="btn">Upload images</button>
           <input id="gallery-upload" type="file" accept="image/*" multiple />
-          <small>Drag to rearrange. Toggle show/hide. Hidden images show a glyph placeholder—hover shows “Show” or click the glyph to reveal. Stored locally. No delete.</small>
+          <small>Drag to rearrange. Toggle show/hide. Hidden images show a glyph until revealed. Stored locally. No delete.</small>
         </div>
         <h3>Your Gallery</h3>
         <div id="gallery-user"></div>
@@ -167,6 +175,7 @@ h1,h2{ text-shadow:0 0 10px rgba(255,30,138,.25) }
       </div>
     </div>
 
+    <!-- Settings -->
     <div id="tab-settings" class="tab">
       <h1>Settings</h1>
       <div class="card" style="cursor:default">
@@ -185,7 +194,7 @@ h1,h2{ text-shadow:0 0 10px rgba(255,30,138,.25) }
       <small>Settings are stored locally in your browser.</small>
     </div>
 
-    <!-- Area View -->
+    <!-- Area View (per-memory) -->
     <div id="area-view" class="tab">
       <button class="btn back" id="area-back">← Return to Sanctum</button>
       <h1 id="area-title">Area</h1>
@@ -194,7 +203,7 @@ h1,h2{ text-shadow:0 0 10px rgba(255,30,138,.25) }
         <button class="navbtn" data-area-tab="gallery">Area Gallery</button>
       </div>
       <div id="area-lore" class="tab active">
-        <div class="card" style="cursor:default"><p id="area-lore-text">No lore yet. This room awaits your words.</p></div>
+        <div class="card" style="cursor:default"><p id="area-lore-text">No lore yet. Add some via “Add a Memory” later or keep this as a quiet room.</p></div>
       </div>
       <div id="area-gallery" class="tab">
         <div class="card" style="cursor:default">
@@ -213,6 +222,7 @@ h1,h2{ text-shadow:0 0 10px rgba(255,30,138,.25) }
 </main>
 
 <script>
+// === Config ===
 const PASSCODE="masterisgod";
 const GLYPHS="ᚠᚨᚱᛃᛟᚱᛁᛟᛞᚨᛉᛇᛞᚾᚷᚱᛊᛋᛏᛜᚱᛁᛝᛟᛞᚨᚷ";
 const BACKS={
@@ -224,11 +234,11 @@ const BACKS={
 };
 const AUDIO_SRC="assets/audio/whisper_loop.wav";
 
+// === State ===
 let settings={remember:false,mute:true,reduceMotion:false,theme:"dominant"};
 try{ const s=JSON.parse(localStorage.getItem("settings")||"{}"); settings=Object.assign(settings,s);}catch(e){}
 let traced=0, drawing=false, whisper, glyphTimer=null;
-const live=document.getElementById("aria-live");
-const speak=(msg)=>{ live.textContent=msg; };
+const speak=(msg)=>{ const live=document.getElementById("aria-live"); live.textContent=msg; };
 
 function vibrate(pattern){ if(navigator.vibrate){ try{ navigator.vibrate(pattern);}catch(e){} } }
 function pickSizeKey(){ const w=innerWidth; return w>1600?'l':(w>1024?'m':'s'); }
@@ -242,7 +252,7 @@ function spawnGlyphs(){ const layer=document.getElementById("glyph-layer"); retu
 function startWhisper(){ try{ whisper=new Audio(AUDIO_SRC); whisper.loop=true; whisper.volume=settings.mute?0:.15; const input=document.getElementById("pass"); const kick=()=>{ whisper.play().catch(()=>{}); input.removeEventListener("input",kick); }; input.addEventListener("input",kick);}catch(e){} }
 function stopWhisper(){ if(whisper){ whisper.pause(); whisper.currentTime=0; }}
 
-// focus trap
+// Focus trap
 function trapFocus(dialogEl){
   const FOCUSABLE='button,[href],input,select,textarea,[tabindex]:not([tabindex="-1"])';
   const nodes=[...dialogEl.querySelectorAll(FOCUSABLE)].filter(el=>!el.hasAttribute("disabled"));
@@ -254,7 +264,7 @@ function trapFocus(dialogEl){
 function show(el){ el.style.display="flex"; el.setAttribute("aria-hidden","false"); }
 function hide(el){ el.style.display="none"; el.setAttribute("aria-hidden","true"); }
 
-// consent
+// Consent (one-time with sigil capture)
 function showConsent(){
   const d=document.getElementById("consent"); show(d);
   const card=d.querySelector(".dialog-card"); let untrap=trapFocus(card);
@@ -283,7 +293,7 @@ function showConsent(){
   document.getElementById("consent-no").onclick=()=>{ speak("Consent denied. The door remains closed."); };
 }
 
-// lock
+// Lock
 async function showLock(){
   await setLockBackground();
   const d=document.getElementById("lock"); show(d);
@@ -304,7 +314,7 @@ async function showLock(){
   };
 }
 
-// unlock
+// Unlock
 async function unlock(skipPassword){
   if(!skipPassword){
     const v=document.getElementById("pass").value.trim();
@@ -324,7 +334,13 @@ async function unlock(skipPassword){
   loadMemories();
 }
 
-// settings & nav
+// Settings + Nav
+function loadSettingsUI(){
+  document.getElementById("set-remember").checked=!!settings.remember;
+  document.getElementById("set-mute").checked=!!settings.mute;
+  document.getElementById("set-reduce").checked=!!settings.reduceMotion;
+  document.getElementById("set-theme").value=settings.theme||"dominant";
+}
 document.getElementById("set-save").onclick=()=>{
   settings.remember=document.getElementById("set-remember").checked;
   settings.mute=document.getElementById("set-mute").checked;
@@ -346,7 +362,7 @@ document.getElementById("set-save").onclick=()=>{
   }));
 })();
 
-// memories (sanctum)
+// Memories (Sanctum)
 async function loadMemories(){
   const out=document.getElementById("mem-list");
   try{
@@ -361,40 +377,46 @@ async function loadMemories(){
       <div style="margin-top:8px;opacity:.9;">${x.content||""}</div>
     </div>`).join("");
 
+    // make cards clickable
     [...out.querySelectorAll(".card")].forEach(el=>{
       el.addEventListener("click",()=>{
         const id=el.getAttribute("data-id");
         const locked = el.getAttribute("data-locked")==="true";
-        if(locked){ alert("This area is locked perform the Masters ritual to unlock."); return; }
-        const meta = merged.find(m=>m.id===id);
-        openArea(id, meta);
+        if(locked){
+          alert("This area is locked perform the Masters ritual to unlock.");
+          return;
+        }
+        openArea(id, merged.find(m=>m.id===id));
       });
     });
+
   }catch(e){
     out.innerHTML = `<div class="card" style="cursor:default">Memory scroll not found yet.</div>`;
   }
 }
 
-// area view
+// Area view (per-memory) with its own Lore & Gallery
 function areaKey(id){ return "area:"+id; }
 function areaGalleryKey(id){ return "galleryArea:"+id; }
 function areaOrderKey(id){ return "galleryAreaOrder:"+id; }
 
 function openArea(id, meta){
+  // switch to area-view
   document.getElementById("tab-sanctum").classList.remove("active");
   document.getElementById("area-view").style.display="block";
   document.getElementById("area-title").textContent = meta?.title || ("Area "+id);
-
+  // tabs inside area
   const tabs=[...document.querySelectorAll("#area-tabs .navbtn")];
-  tabs.forEach(b=>b.classList.remove("active")); tabs[0].classList.add("active");
+  tabs.forEach(b=>b.classList.remove("active"));
+  tabs[0].classList.add("active");
   document.getElementById("area-lore").classList.add("active");
   document.getElementById("area-gallery").classList.remove("active");
 
-  // area lore text
+  // area lore text (stored per-area)
   const lore = JSON.parse(localStorage.getItem(areaKey(id)) || "{}");
   document.getElementById("area-lore-text").textContent = lore.text || "No lore yet. This room awaits your words.";
 
-  // area gallery upload
+  // area gallery setup (upload + render)
   const uploadBtn=document.getElementById("area-upload-btn");
   const uploadInput=document.getElementById("area-upload");
   uploadBtn.onclick=()=> uploadInput.click();
@@ -420,7 +442,6 @@ function openArea(id, meta){
     e.target.value="";
   };
 
-  // switch tabs
   function switchAreaTab(which){
     document.querySelectorAll("#area-view .tab").forEach(t=>t.classList.remove("active"));
     if(which==="lore") document.getElementById("area-lore").classList.add("active");
@@ -457,17 +478,11 @@ function renderAreaGallery(id){
     </div>
   `).join("");
 
-  // toggle show/hide (button + placeholder click)
+  // toggle
   root.querySelectorAll(".toggle").forEach(btn=>{
     btn.onclick=()=>{
       const gid=btn.dataset.id; const a=JSON.parse(localStorage.getItem(areaGalleryKey(id))||"[]");
       const ix=a.findIndex(i=>i.id===gid); if(ix>=0){ a[ix].visible = !(a[ix].visible!==false); localStorage.setItem(areaGalleryKey(id), JSON.stringify(a)); renderAreaGallery(id); }
-    };
-  });
-  root.querySelectorAll(".gallery-item.hidden .placeholder").forEach(ph=>{
-    ph.onclick=()=>{
-      const gid=ph.parentElement.dataset.id; const a=JSON.parse(localStorage.getItem(areaGalleryKey(id))||"[]");
-      const ix=a.findIndex(i=>i.id===gid); if(ix>=0){ a[ix].visible = true; localStorage.setItem(areaGalleryKey(id), JSON.stringify(a)); renderAreaGallery(id); }
     };
   });
 
@@ -490,7 +505,7 @@ function renderAreaGallery(id){
   });
 }
 
-// global gallery
+// Main Gallery (global) — upload/show-hide/drag
 function getUserGallery(){ try{ return JSON.parse(localStorage.getItem("galleryUser")||"[]"); }catch(e){ return []; } }
 function saveUserGallery(arr){ localStorage.setItem("galleryUser", JSON.stringify(arr)); }
 function getOrder(){ try{ return JSON.parse(localStorage.getItem("galleryOrder")||"[]"); }catch(e){ return []; } }
@@ -512,6 +527,7 @@ function renderUserGallery(){
     </div>
   `).join("");
 
+  // Toggle show/hide (placeholder glyph reveals)
   root.querySelectorAll(".toggle").forEach(btn=>{
     btn.onclick=()=>{
       const id=btn.dataset.id;
@@ -520,14 +536,8 @@ function renderUserGallery(){
       if(ix>=0){ arr[ix].visible = !(arr[ix].visible!==false); saveUserGallery(arr); renderUserGallery(); }
     };
   });
-  root.querySelectorAll(".gallery-item.hidden .placeholder").forEach(ph=>{
-    ph.onclick=()=>{
-      const id=ph.parentElement.dataset.id; const arr=getUserGallery();
-      const ix=arr.findIndex(i=>i.id===id);
-      if(ix>=0){ arr[ix].visible = true; saveUserGallery(arr); renderUserGallery(); }
-    };
-  });
 
+  // Drag & drop reorder
   let dragId=null;
   root.querySelectorAll(".draggable").forEach(el=>{
     el.addEventListener("dragstart", e=>{ dragId=el.dataset.id; e.dataTransfer.setData("text/plain", dragId); });
@@ -577,32 +587,23 @@ function setupGallery(){
     e.target.value="";
   });
 
-  if(getOrder().length===0 && getUserGallery().length>0){ saveOrder(getUserGallery().map(i=>i.id)); }
+  // Initialize order if empty
+  const items=getUserGallery(); const order=getOrder();
+  if(order.length===0 && items.length>0){ saveOrder(items.map(i=>i.id)); }
   renderUserGallery();
   renderBuiltinGallery();
 }
 
-// init
+// Init flow
 window.addEventListener("DOMContentLoaded", async ()=>{
-  // nav + settings
-  (function setupNav(){
-    const tabs=["sanctum","lore","gallery","settings","area-view"];
-    const btns=[...document.querySelectorAll("#nav .navbtn")];
-    btns.forEach(b=>b.addEventListener("click",()=>{
-      btns.forEach(x=>x.classList.remove("active")); b.classList.add("active");
-      tabs.forEach(t=>document.getElementById("tab-"+t)?.classList.remove("active"));
-      document.getElementById("area-view").style.display="none";
-      const target="tab-"+b.dataset.tab;
-      document.getElementById(target).classList.add("active");
-      document.getElementById("content").scrollIntoView({behavior:"smooth", block:"start"});
-    }));
-  })();
-  document.getElementById("set-remember").checked=!!settings.remember;
-  document.getElementById("set-mute").checked=!!settings.mute;
-  document.getElementById("set-reduce").checked=!!settings.reduceMotion;
-  document.getElementById("set-theme").value=settings.theme||"dominant";
-
+  // gallery, settings
   setupGallery();
+  (function loadSettingsUI(){
+    document.getElementById("set-remember").checked=!!settings.remember;
+    document.getElementById("set-mute").checked=!!settings.mute;
+    document.getElementById("set-reduce").checked=!!settings.reduceMotion;
+    document.getElementById("set-theme").value=settings.theme||"dominant";
+  })();
 
   const remembered = localStorage.getItem("rememberUnlocked")==="1";
   const sigilSaved = localStorage.getItem("sigilSaved")==="1";
