@@ -397,5 +397,75 @@ window.addEventListener("DOMContentLoaded", async ()=>{
   if(localStorage.getItem("onboarded")==="1") showConsent(); else showOnboarding();
 });
 </script>
+
+  <!-- === Utility+ Sections: Gallery, Lore, Sanctum === -->
+<section id="gallery" class="card">
+  <div class="row"><div class="sub">Gallery — Your Uploads</div></div>
+  <p class="small">Add images (stored locally). Hide or reveal; nothing is deleted.</p>
+  <div class="row">
+    <input id="gal-upload" type="file" accept="image/*" multiple />
+    <button id="gal-add" class="btn">Add to Gallery</button>
+    <button id="gal-export" class="btn">Export Gallery JSON</button>
+    <input id="gal-filter" class="input" placeholder="Filter by name…" />
+    <label class="row" style="gap:.5rem;">
+      <input id="gal-show-hidden" type="checkbox" />
+      <span>Show hidden</span>
+    </label>
+  </div>
+  <div id="gal-grid" class="grid"></div>
+</section>
+
+<section id="lore" class="card">
+  <div class="row"><div class="sub">Lore — Zar'mneya Exchange</div></div>
+  <p class="small">Speak to Zar'mneya. Your words become living lore entries. Hide or reveal later.</p>
+  <div class="row">
+    <input id="lore-title" class="input" placeholder="Title (optional)" />
+  </div>
+  <textarea id="lore-input" class="input" rows="4" placeholder="Offer your line…"></textarea>
+  <div class="row">
+    <button id="lore-add" class="btn">Add Lore</button>
+    <button id="lore-export" class="btn">Export Lore JSON</button>
+    <input id="lore-filter" class="input" placeholder="Filter by title or text…" />
+    <label class="row" style="gap:.5rem;">
+      <input id="lore-show-hidden" type="checkbox" />
+      <span>Show hidden</span>
+    </label>
+  </div>
+  <div id="lore-list" class="list"></div>
+</section>
+
+<section id="sanctum" class="card">
+  <div class="row"><div class="sub">Sanctum — Thresholds</div></div>
+  <p class="small">Everything is clickable. Locked items will say so. Hide/reveal only.</p>
+  <div id="sanctum-grid" class="grid">
+    <button class="sanctum-item btn" data-key="door_chamber">Chamber Door</button>
+    <button class="sanctum-item btn" data-key="door_vault">Vault Door</button>
+    <button class="sanctum-item btn" data-key="door_library">Library Door</button>
+    <button class="sanctum-item btn" data-key="door_oracle">Oracle Door</button>
+  </div>
+  <div class="small row" style="gap:.5rem; margin-top:.75rem;">
+    <label class="row" style="gap:.5rem;"><input id="sanctum-show-hidden" type="checkbox" /> Show hidden entries</label>
+    <button id="sanctum-export" class="btn">Export Sanctum JSON</button>
+  </div>
+</section>
+
+<!-- Modals -->
+<dialog id="modal-lock" class="card" style="max-width:min(520px,90vw)">
+  <div class="sub">Locked</div>
+  <p>This is locked. Perform the Master's rituals to unlock.</p>
+  <div class="row"><button id="lock-close" class="btn">Close</button></div>
+</dialog>
+
+<dialog id="modal-sanctum-item" class="card" style="max-width:min(640px,90vw)">
+  <div class="sub" id="sanctum-item-title">Sanctum</div>
+  <div id="sanctum-item-body" class="small"></div>
+  <div class="row">
+    <label class="row" style="gap:.5rem;"><input id="sanctum-toggle-hidden" type="checkbox" /> Hidden</label>
+    <label class="row" style="gap:.5rem;"><input id="sanctum-toggle-locked" type="checkbox" /> Locked</label>
+    <button id="sanctum-close" class="btn">Close</button>
+  </div>
+</dialog>
+<!-- === /Utility+ Sections === -->
+
 </body>
 </html>
