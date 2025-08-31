@@ -1,0 +1,22 @@
+{
+  "messages": [
+    {
+      "id": "m-001",
+      "title": "Welcome Supplicant",
+      "body": "Breathe. Consent lights the way.",
+      "tags": [
+        "welcome"
+      ],
+      "createdAt": "seed"
+    },
+    {
+      "id": "m-002",
+      "title": "House Laws",
+      "body": "Inviolability \u2022 Sovereign Will \u2022 Grace-Name Bloom.",
+      "tags": [
+        "law"
+      ],
+      "createdAt": "seed"
+    }
+  ]
+}
