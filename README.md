@@ -1,7 +1,6 @@
-# master.gabriels.dungeon — Production Build
-
-- Tier‑1 UX: accessibility (focus trap, aria‑live, keyboard), password eye toggle, preload backgrounds, fetch retry.
-- Tier‑2 polish: mobile haptics on consent/unlock, onboarding mini‑scroll, audio muted by default.
-- Inline CSS/JS (no external paths to break).
-
-Deploy by uploading all files to repo root and enabling GitHub Pages (main / root).
+# master.gabriels.dungeon — Prod++
+- robots noindex,nofollow
+- one-time consent (first sigil saved to gallery, then consent is skipped)
+- global gallery: upload, show/hide with placeholder glyph when hidden, drag-and-drop reorder (localStorage)
+- sanctum scroll fixed; memory cards clickable; locked cards show ritual message
+- area view per memory with its own Lore & Gallery (upload/show-hide/reorder) and back to Sanctum
