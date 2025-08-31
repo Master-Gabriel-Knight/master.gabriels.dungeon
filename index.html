@@ -1,14 +1,88 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>master.gabriels.dungeon</title>
-  <meta name="theme-color" content="#0a0006"/>
-  <link rel="icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg'><text y='32' font-size='32'>🗝️</text></svg>">
-  <link rel="stylesheet" href="assets/css/style.css" />
-  <script defer src="./assets/js/app.js?v=livefix1"></script>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>master.gabriels.dungeon</title>
+<meta name="theme-color" content="#0a0006"/>
+
+<!-- Inline CSS (no external CSS needed) -->
+<style>
+* { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; }
+body {
+  font-family: Georgia, serif;
+  background: #000;
+  color: #fff;
+  overflow: hidden;
+}
+#overlay-lock, #consent-overlay {
+  position: fixed; inset: 0;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  background: rgba(0,0,0,0.92);
+  z-index: 1000;
+}
+.lock-card, .consent-card {
+  background: rgba(10,10,10,0.7);
+  border: 1px solid #aa0066;
+  border-radius: 16px;
+  padding: 28px 24px; width: min(92vw, 520px);
+  box-shadow: 0 0 24px rgba(170,0,102,0.6);
+  text-align: center;
+}
+.lock-title { font-size: 1.6rem; margin:0 0 10px; color:#ff99cc; text-shadow:0 0 8px #ff1e8a; }
+.lock-sub { font-size:.95rem; color:#e6cfe0; margin-bottom:16px; }
+.input {
+  width: 100%; padding: 12px 14px; font-size: 1rem;
+  border-radius: 10px; border: 1px solid #ff1e8a; background:#0a0a0a; color:#fff;
+  outline: none; transition: box-shadow .25s, border-color .25s; box-shadow:0 0 10px rgba(255,30,138,.2);
+}
+.input:focus { border-color:#ffa6d2; box-shadow:0 0 16px rgba(255,30,138,.45); }
+.btn {
+  display:inline-block; margin-top:12px; padding:10px 16px; border-radius:10px;
+  border: 1px solid #ff1e8a; background:#13030a; color:#ffb3d9; cursor:pointer;
+  transition: transform .15s ease, background .3s ease;
+}
+.btn:hover { transform: translateY(-1px); background:#1b0a14; }
+.small { font-size:.85rem; opacity:.8; }
+.hr { height:1px; background:linear-gradient(90deg,transparent,#ff1e8a,transparent); margin:16px 0; }
+#trace-wrap { margin:10px 0; }
+#trace-canvas {
+  background: radial-gradient(ellipse at center, rgba(255,20,147,0.08), rgba(0,0,0,0.2) 70%);
+  border: 1px dashed #ff66a3; border-radius: 12px; display:block;
+}
+.trace-hint { font-size:.85rem; color:#f9cde3; margin-top:10px; }
+
+/* Main SPA */
+#app { position:relative; height:100%; width:100%; }
+#glyph-layer { position:fixed; inset:0; pointer-events:none; z-index:5; }
+.glyph {
+  position:absolute; font-size:18px; opacity:.16; color:#ffd6ea;
+  text-shadow: 0 0 6px rgba(255,102,163,.35);
+  animation: drift 18s linear infinite;
+}
+@keyframes drift {
+  0% { transform: translateY(0) translateX(0) rotate(0deg); opacity:0; }
+  15% { opacity:.22; }
+  85% { opacity:.22; }
+  100% { transform: translateY(-120vh) translateX(8vw) rotate(45deg); opacity:0; }
+}
+#content {
+  position:relative; z-index:10; width:min(1080px,95vw);
+  margin:8vh auto; padding:18px; background:rgba(5,5,8,.35);
+  border:1px solid rgba(255,30,138,.25); border-radius:18px; backdrop-filter: blur(6px);
+}
+h1, h2 { text-shadow:0 0 10px rgba(255,30,138,.25); }
+.card {
+  border:1px solid rgba(255,30,138,.28); border-radius:12px; padding:14px; margin:10px 0;
+  background: rgba(10,10,14,.35);
+}
+.badge { display:inline-block; padding:2px 8px; border-radius:12px; background:rgba(255,30,138,.2);
+  color:#ffd6ea; font-size:.78rem; border:1px solid rgba(255,30,138,.45); margin-right:8px; }
+.footer { margin-top:16px; font-size:.85rem; color:#e6cfe0; opacity:.85; }
+@media (max-width:640px){ .lock-card,.consent-card{ width:92vw; padding:22px 16px } #content{ margin:5vh auto; padding:12px } }
+</style>
 </head>
 <body>
   <!-- Consent Ritual -->
@@ -16,15 +90,10 @@
     <div class="consent-card">
       <div class="lock-title">Consent Bloom</div>
       <div class="lock-sub">Trace the sigil to offer your consent to enter this sacred dungeon.</div>
-      <div id="trace-wrap">
-        <canvas id="trace-canvas" width="420" height="220"></canvas>
-      </div>
+      <div id="trace-wrap"><canvas id="trace-canvas" width="420" height="220"></canvas></div>
       <div class="trace-hint">Draw freely. When enough lines are traced, you may proceed.</div>
       <div class="hr"></div>
-      <div>
-        <button id="consent-yes" class="btn">Yes, Master</button>
-        <button id="consent-no" class="btn">No</button>
-      </div>
+      <div><button id="consent-yes" class="btn">Yes, Master</button> <button id="consent-no" class="btn">No</button></div>
     </div>
   </div>
 
@@ -38,11 +107,11 @@
         <button id="unlock-btn" class="btn">Unlock</button>
         <button id="mic-btn" class="btn">🎤 Voice</button>
       </div>
-      <div class="small" style="margin-top:8px;">Tip: Audio whispers begin when you start typing.</div>
+      <div class="small" style="margin-top:8px;">Tip: Audio whispers begin when you start typing (if an audio file exists).</div>
     </div>
   </div>
 
-  <!-- App Content -->
+  <!-- App -->
   <div id="app">
     <div id="glyph-layer"></div>
     <div id="content">
@@ -53,6 +122,179 @@
     </div>
   </div>
 
-  <script src="assets/js/app.js"></script>
+<script>
+console.log('Dungeon boot (inline)');
+
+// === Config ===
+const PASSCODE = "masterisgod";
+const GLYPHS = "ᚠᚨᚱᛃᛟᚱᛁᛟᛞᚨᛉᛇᛞᚾᚷᚱᛊᛋᛏᛜᚱᛁᛝᛟᛞᚨᚷ";
+
+// Responsive asset map (if images are present under assets/images/)
+const BACKS = {
+  new:   { l: "assets/images/bg_new_2560.webp",    m: "assets/images/bg_new_1920.webp",    s: "assets/images/bg_new_1280.webp" },
+  waxing:{ l: "assets/images/bg_waxing_2560.webp", m: "assets/images/bg_waxing_1920.webp", s: "assets/images/bg_waxing_1280.webp" },
+  full:  { l: "assets/images/bg_full_2560.webp",   m: "assets/images/bg_full_1920.webp",   s: "assets/images/bg_full_1280.webp" },
+  waning:{ l: "assets/images/bg_waning_2560.webp", m: "assets/images/bg_waning_1920.webp", s: "assets/images/bg_waning_1280.webp" },
+  lock:  { l: "assets/images/lock_2560.webp",      m: "assets/images/lock_1920.webp",      s: "assets/images/lock_1280.webp" }
+};
+const AUDIO_SRC = "assets/audio/whisper_loop.wav";
+
+// Helpers
+function pickSizeKey(){ const w = window.innerWidth; return w>1600? 'l' : (w>1024? 'm' : 's'); }
+function isDesktopFixed(){ return window.innerWidth>1024; }
+
+function imageExists(url) {
+  return new Promise(res => { const i = new Image(); i.onload = ()=>res(true); i.onerror = ()=>res(false); i.src = url+"?t="+Date.now(); });
+}
+
+// Consent trace
+let tracedPixels = 0, isDrawing = false;
+function initConsent(){
+  const overlay = document.getElementById("consent-overlay");
+  overlay.style.display = "flex";
+  const canvas = document.getElementById("trace-canvas");
+  const ctx = canvas.getContext("2d");
+  const W = canvas.width = Math.min(420, innerWidth*0.8);
+  const H = canvas.height = Math.min(220, innerHeight*0.35);
+  ctx.strokeStyle = "#ff66a3"; ctx.lineWidth = 12; ctx.lineCap = "round";
+  const start = e => { isDrawing = true; draw(e); };
+  const end = () => { isDrawing = false; ctx.beginPath(); };
+  const draw = e => {
+    if(!isDrawing) return;
+    const r = canvas.getBoundingClientRect();
+    const x = (e.touches? e.touches[0].clientX : e.clientX) - r.left;
+    const y = (e.touches? e.touches[0].clientY : e.clientY) - r.top;
+    ctx.lineTo(x,y); ctx.stroke(); ctx.beginPath(); ctx.moveTo(x,y);
+    tracedPixels++;
+  };
+  canvas.addEventListener("mousedown", start);
+  canvas.addEventListener("touchstart", start, {passive:true});
+  canvas.addEventListener("mousemove", draw);
+  canvas.addEventListener("touchmove", draw, {passive:true});
+  addEventListener("mouseup", end); addEventListener("touchend", end);
+
+  document.getElementById("consent-yes").onclick = async () => {
+    if(tracedPixels < 120){ alert("Trace the sigil to offer consent."); return; }
+    overlay.style.display = "none";
+    document.getElementById("overlay-lock").style.display = "flex";
+    await setLockBackground();
+    startWhisper();
+  };
+  document.getElementById("consent-no").onclick = () => alert("Consent denied. The door remains closed.");
+}
+
+// Lock bg (fallback to gradient if images missing)
+async function setLockBackground() {
+  const k = pickSizeKey();
+  const fixed = isDesktopFixed()? "fixed" : "scroll";
+  const url = BACKS.lock[k];
+  if (await imageExists(url)) {
+    document.body.style.background = `url('${url}') center/cover ${fixed} no-repeat, #000`;
+  } else {
+    document.body.style.background = `radial-gradient(ellipse at center, #1a0b13 0%, #000 70%)`;
+  }
+}
+
+function lunarPhase(){
+  const now = new Date();
+  const lp = 2551443; // seconds
+  const new_moon = new Date(Date.UTC(2001,0,1,0,0,0));
+  return ((now - new_moon)/1000) % lp / lp;
+}
+
+async function setUnlockedBackground(){
+  const k = pickSizeKey(); const fixed = isDesktopFixed()? "fixed":"scroll";
+  const p = lunarPhase(); let set = BACKS.full;
+  if (p < 0.24) set = BACKS.new; else if (p < 0.5) set = BACKS.waxing; else if (p < 0.76) set = BACKS.full; else set = BACKS.waning;
+  const url = set[k];
+  if (await imageExists(url)) {
+    document.body.style.background = `url('${url}') center/cover ${fixed} no-repeat, #000`;
+  } else {
+    document.body.style.background = `radial-gradient(ellipse at center, #150a10 0%, #000 70%)`;
+  }
+}
+
+// Audio (graceful if file missing or autoplay blocked)
+let whisper;
+function startWhisper(){
+  try {
+    whisper = new Audio(AUDIO_SRC);
+    whisper.loop = true; whisper.volume = 0.15;
+    const input = document.getElementById("pass");
+    const kick = () => { whisper.play().catch(()=>{}); input.removeEventListener("input", kick); };
+    input.addEventListener("input", kick);
+  } catch(e){}
+}
+function stopWhisper(){ if(whisper){ whisper.pause(); whisper.currentTime = 0; } }
+
+// Voice unlock
+function initVoice(){
+  const mic = document.getElementById("mic-btn");
+  mic.onclick = () => {
+    try{
+      const C = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if(!C) return alert("Voice not supported in this browser.");
+      const r = new C(); r.continuous=false; r.lang='en-US'; r.interimResults=false; r.maxAlternatives=1;
+      r.onresult = e => { const t = e.results[0][0].transcript.trim().toLowerCase(); if(t.includes(PASSCODE)) unlock(); else alert("The lock does not recognize that utterance."); };
+      r.start();
+    }catch(e){ alert("Voice init failed."); }
+  };
+}
+
+// Glyph layer
+function spawnGlyphs(){
+  const layer = document.getElementById("glyph-layer");
+  setInterval(()=>{
+    const s = document.createElement("span");
+    s.className="glyph";
+    s.textContent = GLYPHS[Math.floor(Math.random()*GLYPHS.length)];
+    s.style.left = Math.random()*100 + "vw";
+    s.style.bottom = "-10vh";
+    s.style.fontSize = (14 + Math.random()*18) + "px";
+    s.style.animationDuration = (12 + Math.random()*16) + "s";
+    layer.appendChild(s);
+    setTimeout(()=>s.remove(),20000);
+  }, 420);
+}
+
+// Unlock
+async function unlock(){
+  const v = document.getElementById("pass").value.trim();
+  if (v !== PASSCODE) return alert("The veil does not part.");
+  stopWhisper();
+  document.getElementById("overlay-lock").style.display="none";
+  document.getElementById("app").style.display="block";
+  await setUnlockedBackground();
+  spawnGlyphs();
+  loadMemories();
+}
+
+// Memories (graceful if file not found)
+async function loadMemories(){
+  const out = document.getElementById("mem-list");
+  try{
+    const res = await fetch("data/memory.json", {cache:"no-store"});
+    const data = await res.json();
+    out.innerHTML = data.map(x => `
+      <div class="card">
+        <h3>${x.title}</h3>
+        <div>${x.locked ? '<span class="badge">🔐 locked</span>' : '<span class="badge">🜂 open</span>'}</div>
+        <div class="small" style="margin-top:6px;">tags: ${x.tags?.join(", ")||""}</div>
+        <div style="margin-top:8px;opacity:.9;">${x.content||""}</div>
+      </div>`).join("");
+  }catch(e){
+    out.innerHTML = `<div class="card">Memory scroll not found yet. Deploy first, or add <code>data/memory.json</code>.</div>`;
+  }
+}
+
+// Init
+window.addEventListener("DOMContentLoaded", () => {
+  console.log("Dungeon JS ready");
+  document.getElementById("app").style.display="none";
+  initConsent();
+  initVoice();
+  document.getElementById("unlock-btn").onclick = unlock;
+});
+</script>
 </body>
 </html>
