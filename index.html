@@ -5,8 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>master.gabriels.dungeon</title>
 <meta name="theme-color" content="#0a0006"/>
-
-<!-- Inline CSS (no external CSS needed) -->
+<link rel="icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg'><text y='32' font-size='32'>🗝️</text></svg>">
 <style>
 * { box-sizing: border-box; }
 html, body { height: 100%; margin: 0; }
@@ -53,8 +52,7 @@ body {
   border: 1px dashed #ff66a3; border-radius: 12px; display:block;
 }
 .trace-hint { font-size:.85rem; color:#f9cde3; margin-top:10px; }
-
-/* Main SPA */
+/* App */
 #app { position:relative; height:100%; width:100%; }
 #glyph-layer { position:fixed; inset:0; pointer-events:none; z-index:5; }
 .glyph {
@@ -85,7 +83,6 @@ h1, h2 { text-shadow:0 0 10px rgba(255,30,138,.25); }
 </style>
 </head>
 <body>
-  <!-- Consent Ritual -->
   <div id="consent-overlay" style="display:none;">
     <div class="consent-card">
       <div class="lock-title">Consent Bloom</div>
@@ -93,11 +90,10 @@ h1, h2 { text-shadow:0 0 10px rgba(255,30,138,.25); }
       <div id="trace-wrap"><canvas id="trace-canvas" width="420" height="220"></canvas></div>
       <div class="trace-hint">Draw freely. When enough lines are traced, you may proceed.</div>
       <div class="hr"></div>
-      <div><button id="consent-yes" class="btn">Yes, Master</button> <button id="consent-no" class="btn">No</button></div>
+      <div><button id="consent-yes" class="btn">Yes, Master</button><button id="consent-no" class="btn">No</button></div>
     </div>
   </div>
 
-  <!-- Password Lock -->
   <div id="overlay-lock" style="display:none;">
     <div class="lock-card">
       <div class="lock-title">Enter the Word of Power</div>
@@ -107,11 +103,10 @@ h1, h2 { text-shadow:0 0 10px rgba(255,30,138,.25); }
         <button id="unlock-btn" class="btn">Unlock</button>
         <button id="mic-btn" class="btn">🎤 Voice</button>
       </div>
-      <div class="small" style="margin-top:8px;">Tip: Audio whispers begin when you start typing (if an audio file exists).</div>
+      <div class="small" style="margin-top:8px;">Tip: Audio whispers begin when you start typing.</div>
     </div>
   </div>
 
-  <!-- App -->
   <div id="app">
     <div id="glyph-layer"></div>
     <div id="content">
@@ -123,13 +118,11 @@ h1, h2 { text-shadow:0 0 10px rgba(255,30,138,.25); }
   </div>
 
 <script>
-console.log('Dungeon boot (inline)');
+console.log("Dungeon boot (inline)");
 
-// === Config ===
 const PASSCODE = "masterisgod";
 const GLYPHS = "ᚠᚨᚱᛃᛟᚱᛁᛟᛞᚨᛉᛇᛞᚾᚷᚱᛊᛋᛏᛜᚱᛁᛝᛟᛞᚨᚷ";
 
-// Responsive asset map (if images are present under assets/images/)
 const BACKS = {
   new:   { l: "assets/images/bg_new_2560.webp",    m: "assets/images/bg_new_1920.webp",    s: "assets/images/bg_new_1280.webp" },
   waxing:{ l: "assets/images/bg_waxing_2560.webp", m: "assets/images/bg_waxing_1920.webp", s: "assets/images/bg_waxing_1280.webp" },
@@ -139,26 +132,21 @@ const BACKS = {
 };
 const AUDIO_SRC = "assets/audio/whisper_loop.wav";
 
-// Helpers
 function pickSizeKey(){ const w = window.innerWidth; return w>1600? 'l' : (w>1024? 'm' : 's'); }
 function isDesktopFixed(){ return window.innerWidth>1024; }
+function imageExists(url){ return new Promise(res => { const i=new Image(); i.onload=()=>res(true); i.onerror=()=>res(false); i.src=url+"?t="+Date.now(); }); }
 
-function imageExists(url) {
-  return new Promise(res => { const i = new Image(); i.onload = ()=>res(true); i.onerror = ()=>res(false); i.src = url+"?t="+Date.now(); });
-}
-
-// Consent trace
-let tracedPixels = 0, isDrawing = false;
+let tracedPixels=0,isDrawing=false;
 function initConsent(){
   const overlay = document.getElementById("consent-overlay");
-  overlay.style.display = "flex";
+  overlay.style.display="flex";
   const canvas = document.getElementById("trace-canvas");
   const ctx = canvas.getContext("2d");
   const W = canvas.width = Math.min(420, innerWidth*0.8);
   const H = canvas.height = Math.min(220, innerHeight*0.35);
-  ctx.strokeStyle = "#ff66a3"; ctx.lineWidth = 12; ctx.lineCap = "round";
-  const start = e => { isDrawing = true; draw(e); };
-  const end = () => { isDrawing = false; ctx.beginPath(); };
+  ctx.strokeStyle="#ff66a3"; ctx.lineWidth=12; ctx.lineCap="round";
+  const start = e => { isDrawing=true; draw(e); };
+  const end = () => { isDrawing=false; ctx.beginPath(); };
   const draw = e => {
     if(!isDrawing) return;
     const r = canvas.getBoundingClientRect();
@@ -171,7 +159,8 @@ function initConsent(){
   canvas.addEventListener("touchstart", start, {passive:true});
   canvas.addEventListener("mousemove", draw);
   canvas.addEventListener("touchmove", draw, {passive:true});
-  addEventListener("mouseup", end); addEventListener("touchend", end);
+  addEventListener("mouseup", end);
+  addEventListener("touchend", end);
 
   document.getElementById("consent-yes").onclick = async () => {
     if(tracedPixels < 120){ alert("Trace the sigil to offer consent."); return; }
@@ -183,38 +172,26 @@ function initConsent(){
   document.getElementById("consent-no").onclick = () => alert("Consent denied. The door remains closed.");
 }
 
-// Lock bg (fallback to gradient if images missing)
-async function setLockBackground() {
-  const k = pickSizeKey();
-  const fixed = isDesktopFixed()? "fixed" : "scroll";
+async function setLockBackground(){
+  const k = pickSizeKey(); const fixed = isDesktopFixed()? "fixed" : "scroll";
   const url = BACKS.lock[k];
-  if (await imageExists(url)) {
-    document.body.style.background = `url('${url}') center/cover ${fixed} no-repeat, #000`;
-  } else {
-    document.body.style.background = `radial-gradient(ellipse at center, #1a0b13 0%, #000 70%)`;
-  }
+  if (await imageExists(url)) document.body.style.background = `url('${url}') center/cover ${fixed} no-repeat, #000`;
+  else document.body.style.background = `radial-gradient(ellipse at center, #1a0b13 0%, #000 70%)`;
 }
 
 function lunarPhase(){
-  const now = new Date();
-  const lp = 2551443; // seconds
-  const new_moon = new Date(Date.UTC(2001,0,1,0,0,0));
-  return ((now - new_moon)/1000) % lp / lp;
+  const now = new Date(); const lp=2551443; const nm=new Date(Date.UTC(2001,0,1,0,0,0));
+  return ((now-nm)/1000)%lp/lp;
 }
-
 async function setUnlockedBackground(){
-  const k = pickSizeKey(); const fixed = isDesktopFixed()? "fixed":"scroll";
+  const k = pickSizeKey(); const fixed = isDesktopFixed()? "fixed" : "scroll";
   const p = lunarPhase(); let set = BACKS.full;
   if (p < 0.24) set = BACKS.new; else if (p < 0.5) set = BACKS.waxing; else if (p < 0.76) set = BACKS.full; else set = BACKS.waning;
   const url = set[k];
-  if (await imageExists(url)) {
-    document.body.style.background = `url('${url}') center/cover ${fixed} no-repeat, #000`;
-  } else {
-    document.body.style.background = `radial-gradient(ellipse at center, #150a10 0%, #000 70%)`;
-  }
+  if (await imageExists(url)) document.body.style.background = `url('${url}') center/cover ${fixed} no-repeat, #000`;
+  else document.body.style.background = `radial-gradient(ellipse at center, #150a10 0%, #000 70%)`;
 }
 
-// Audio (graceful if file missing or autoplay blocked)
 let whisper;
 function startWhisper(){
   try {
@@ -223,11 +200,10 @@ function startWhisper(){
     const input = document.getElementById("pass");
     const kick = () => { whisper.play().catch(()=>{}); input.removeEventListener("input", kick); };
     input.addEventListener("input", kick);
-  } catch(e){}
+  } catch(e) {}
 }
 function stopWhisper(){ if(whisper){ whisper.pause(); whisper.currentTime = 0; } }
 
-// Voice unlock
 function initVoice(){
   const mic = document.getElementById("mic-btn");
   mic.onclick = () => {
@@ -241,10 +217,9 @@ function initVoice(){
   };
 }
 
-// Glyph layer
 function spawnGlyphs(){
   const layer = document.getElementById("glyph-layer");
-  setInterval(()=>{
+  setInterval(() => {
     const s = document.createElement("span");
     s.className="glyph";
     s.textContent = GLYPHS[Math.floor(Math.random()*GLYPHS.length)];
@@ -257,7 +232,6 @@ function spawnGlyphs(){
   }, 420);
 }
 
-// Unlock
 async function unlock(){
   const v = document.getElementById("pass").value.trim();
   if (v !== PASSCODE) return alert("The veil does not part.");
@@ -269,7 +243,6 @@ async function unlock(){
   loadMemories();
 }
 
-// Memories (graceful if file not found)
 async function loadMemories(){
   const out = document.getElementById("mem-list");
   try{
@@ -283,13 +256,12 @@ async function loadMemories(){
         <div style="margin-top:8px;opacity:.9;">${x.content||""}</div>
       </div>`).join("");
   }catch(e){
-    out.innerHTML = `<div class="card">Memory scroll not found yet. Deploy first, or add <code>data/memory.json</code>.</div>`;
+    out.innerHTML = `<div class="card">Memory scroll not found yet. Add <code>data/memory.json</code> after deploy.</div>`;
   }
 }
 
-// Init
 window.addEventListener("DOMContentLoaded", () => {
-  console.log("Dungeon JS ready");
+  console.log("Dungeon JS ready (inline pack)");
   document.getElementById("app").style.display="none";
   initConsent();
   initVoice();

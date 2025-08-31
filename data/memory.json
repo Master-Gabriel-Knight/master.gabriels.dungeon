@@ -2,65 +2,21 @@
   {
     "id": "scene001",
     "title": "Guests of Guests",
-    "trigger": "Show me your guests.",
-    "content": "Encrypted roster of those who have entered. Each bound by word and will.",
+    "content": "Encrypted roster of entrants\u2014bound by will.",
     "tags": [
       "guest",
-      "memory",
-      "erotic",
       "index"
-    ],
-    "locked": true
-  },
-  {
-    "id": "scene002",
-    "title": "Hell",
-    "trigger": "Take me to Hell.",
-    "content": "Archive of punishments, trials, and brutal truths. Pleasure through ordeal.",
-    "tags": [
-      "pain",
-      "ritual",
-      "test",
-      "threshold"
     ],
     "locked": true
   },
   {
     "id": "scene003",
     "title": "Fashion",
-    "trigger": "Dress me, Master.",
-    "content": "Encrypted wardrobe of leather, silk, chain, and lace. Each stitch a promise.",
+    "content": "Leather, silk, chain\u2014each stitch a promise.",
     "tags": [
       "fashion",
-      "fetish",
-      "memory"
+      "fetish"
     ],
     "locked": false
-  },
-  {
-    "id": "scene004",
-    "title": "Rituals",
-    "trigger": "I offer myself.",
-    "content": "Encoded rites of service, worship, obedience, and transformation.",
-    "tags": [
-      "ritual",
-      "submission",
-      "worship",
-      "initiation"
-    ],
-    "locked": true
-  },
-  {
-    "id": "scene005",
-    "title": "Implements",
-    "trigger": "Show me your tools.",
-    "content": "Encrypted images and descriptions of tools used for pain, pleasure, and invocation.",
-    "tags": [
-      "tools",
-      "discipline",
-      "fetish",
-      "visual"
-    ],
-    "locked": true
   }
 ]
