@@ -1,17 +1,7 @@
-# 💀 master.gabriels.dungeon — Encrypted Kinky SPA
+# master.gabriels.dungeon — Production Build
 
-A single-page, password-gated, consent-first, mythoglyphic erotic sanctuary.
+- Tier‑1 UX: accessibility (focus trap, aria‑live, keyboard), password eye toggle, preload backgrounds, fetch retry.
+- Tier‑2 polish: mobile haptics on consent/unlock, onboarding mini‑scroll, audio muted by default.
+- Inline CSS/JS (no external paths to break).
 
-## Features
-- Consent ritual (trace to proceed)
-- Password gate + voice unlock (say or type the passphrase)
-- Whisper audio ambiance
-- Lunar background phases
-- Floating Aeongul glyph trails
-- Memory list powered by JSON (`data/memory.json`)
-
-## Password (for demo)
-`masterisgod`
-
-## Deploy
-Push to GitHub Pages (root) and visit your domain. For custom domain, add `CNAME` with `master.gabriels.dungeon`.
+Deploy by uploading all files to repo root and enabling GitHub Pages (main / root).
