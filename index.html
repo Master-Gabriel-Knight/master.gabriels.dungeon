@@ -1,0 +1,57 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>master.gabriels.dungeon</title>
+  <meta name="theme-color" content="#0a0006"/>
+  <link rel="icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg'><text y='32' font-size='32'>🗝️</text></svg>">
+  <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body>
+  <!-- Consent Ritual -->
+  <div id="consent-overlay" style="display:none;">
+    <div class="consent-card">
+      <div class="lock-title">Consent Bloom</div>
+      <div class="lock-sub">Trace the sigil to offer your consent to enter this sacred dungeon.</div>
+      <div id="trace-wrap">
+        <canvas id="trace-canvas" width="420" height="220"></canvas>
+      </div>
+      <div class="trace-hint">Draw freely. When enough lines are traced, you may proceed.</div>
+      <div class="hr"></div>
+      <div>
+        <button id="consent-yes" class="btn">Yes, Master</button>
+        <button id="consent-no" class="btn">No</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Password Lock -->
+  <div id="overlay-lock" style="display:none;">
+    <div class="lock-card">
+      <div class="lock-title">Enter the Word of Power</div>
+      <div class="lock-sub">Speak or type the password. Your breath writes the law.</div>
+      <input id="pass" class="input" type="password" placeholder="whisper it here..." />
+      <div style="display:flex; gap:10px; justify-content:center;">
+        <button id="unlock-btn" class="btn">Unlock</button>
+        <button id="mic-btn" class="btn">🎤 Voice</button>
+      </div>
+      <div class="small" style="margin-top:8px;">Tip: Audio whispers begin when you start typing.</div>
+    </div>
+  </div>
+
+  <!-- App Content -->
+  <div id="app">
+    <div id="glyph-layer"></div>
+    <div id="content">
+      <h1>master.gabriels.dungeon</h1>
+      <p class="small">Encrypted memory sanctuary • Consent-bound • Mythoglyphic eros</p>
+      <div id="mem-list" style="margin-top:12px;"></div>
+      <div class="footer">This is a consensual, sacred space of erotic awakening. You are safe. You are sovereign.</div>
+    </div>
+  </div>
+
+  <script src="assets/js/app.js"></script>
+</body>
+</html>
