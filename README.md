@@ -1,15 +1,7 @@
-# master.gabriels.dungeon — Dual Role Build
+# master.gabriels.dungeon — Production Build
 
-**Passwords**
-- Supplicant: `masterisgod`
-- Master: `Iamthemaster`
+- Tier‑1 UX: accessibility (focus trap, aria‑live, keyboard), password eye toggle, preload backgrounds, fetch retry.
+- Tier‑2 polish: mobile haptics on consent/unlock, onboarding mini‑scroll, audio muted by default.
+- Inline CSS/JS (no external paths to break).
 
-**Master mode adds**
-- Witness (local) ledger: see sessions on your device; export JSON.
-- Master Console: compose broadcast messages.
-  - Download `messages.json` for manual publish (commit to repo under `data/messages.json`), or
-  - Optional Gist publish (enter Gist ID + token in Settings). Supplicants can read from that public gist.
-
-**Notes**
-- Without a backend, global witness requires a remote store. This build supports GitHub Gist as a simple option.
-- Tokens are stored locally (in your browser) and never committed.
+Deploy by uploading all files to repo root and enabling GitHub Pages (main / root).
