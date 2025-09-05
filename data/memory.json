@@ -1,8 +1,17 @@
 [
   {
-    "id": "scene001",
+    "id": "welcome",
+    "title": "Welcome",
+    "blurb": "Begin with breath. Consent first, always.",
+    "tags": [
+      "intro"
+    ],
+    "locked": false
+  },
+  {
+    "id": "guests_of_guests",
     "title": "Guests of Guests",
-    "content": "Roster of entrants\u2014oaths witnessed, signatures sealed.",
+    "blurb": "Roster of entrants\u2014oaths witnessed, signatures sealed.",
     "tags": [
       "guest",
       "index"
@@ -10,9 +19,9 @@
     "locked": true
   },
   {
-    "id": "scene002",
+    "id": "hell_antechamber",
     "title": "Hell Antechamber",
-    "content": "Punishments catalog\u2014ordeals, lessons, graceful severity.",
+    "blurb": "Punishments catalog\u2014ordeals, lessons, graceful severity.",
     "tags": [
       "ritual",
       "ordeal"
@@ -20,9 +29,9 @@
     "locked": true
   },
   {
-    "id": "scene003",
+    "id": "wardrobe",
     "title": "Wardrobe of Surrender",
-    "content": "Leather, silk, chain, lace\u2014each stitch a vow.",
+    "blurb": "Leather, silk, chain, lace\u2014each stitch a vow.",
     "tags": [
       "fashion",
       "fetish"
@@ -30,9 +39,9 @@
     "locked": false
   },
   {
-    "id": "scene004",
+    "id": "rites",
     "title": "Rites of Service",
-    "content": "Offerings, posture, breath, response. Consent-first liturgy.",
+    "blurb": "Offerings, posture, breath, response. Consent-first liturgy.",
     "tags": [
       "ritual",
       "service"
@@ -40,9 +49,9 @@
     "locked": true
   },
   {
-    "id": "scene005",
+    "id": "implements",
     "title": "Implements",
-    "content": "Floggers, crops, cuffs, candles, clips\u2014tools of sensation and meaning.",
+    "blurb": "Floggers, crops, cuffs, candles, clips\u2014tools of sensation and meaning.",
     "tags": [
       "tools",
       "discipline"
@@ -50,9 +59,9 @@
     "locked": true
   },
   {
-    "id": "scene006",
+    "id": "safewords_signals",
     "title": "Safewords & Signals",
-    "content": "Green / Yellow / Red. Tap, snap, fist. Breath speaks first.",
+    "blurb": "Green / Yellow / Red. Tap, snap, fist. Breath speaks first.",
     "tags": [
       "safety",
       "protocol"
@@ -60,9 +69,9 @@
     "locked": false
   },
   {
-    "id": "scene007",
+    "id": "museums",
     "title": "Museums of Pain & Beauty",
-    "content": "Reflections on historic implements\u2014ethics, care, reverence.",
+    "blurb": "Reflections on historic implements\u2014ethics, care, reverence.",
     "tags": [
       "essay",
       "ethics"
@@ -70,9 +79,9 @@
     "locked": false
   },
   {
-    "id": "scene008",
+    "id": "rabbit_hole",
     "title": "Rabbit Hole",
-    "content": "Spiral descent into exquisite obsession\u2014notes and bookmarks.",
+    "blurb": "Spiral descent into exquisite obsession\u2014notes and bookmarks.",
     "tags": [
       "links",
       "curation"
@@ -80,9 +89,9 @@
     "locked": false
   },
   {
-    "id": "scene009",
+    "id": "worship_invitations",
     "title": "Worship Invitations",
-    "content": "When the door opens: tone, attitude, attire.",
+    "blurb": "When the door opens: tone, attitude, attire.",
     "tags": [
       "invitation",
       "etiquette"
@@ -90,9 +99,9 @@
     "locked": false
   },
   {
-    "id": "scene010",
+    "id": "scenes_sparks",
     "title": "Scenes: Sparks",
-    "content": "Vignettes of electricity and surrender\u2014short, suggestive, poetic.",
+    "blurb": "Vignettes of electricity and surrender\u2014short, suggestive, poetic.",
     "tags": [
       "scenes",
       "poetry"
@@ -100,9 +109,9 @@
     "locked": true
   },
   {
-    "id": "scene011",
+    "id": "aftercare_garden",
     "title": "Aftercare Garden",
-    "content": "Warmth, water, sugar, blankets, quiet. Holding becomes holy.",
+    "blurb": "Warmth, water, sugar, blankets, quiet. Holding becomes holy.",
     "tags": [
       "aftercare",
       "care"
@@ -110,9 +119,9 @@
     "locked": false
   },
   {
-    "id": "scene012",
+    "id": "house_laws",
     "title": "House Laws",
-    "content": "Inviolability, Sovereign Will, Grace-Name Bloom. Consent as flame.",
+    "blurb": "Inviolability, Sovereign Will, Grace-Name Bloom. Consent as flame.",
     "tags": [
       "law",
       "protocol"
@@ -120,9 +129,9 @@
     "locked": false
   },
   {
-    "id": "scene013",
+    "id": "confessional",
     "title": "Confessional",
-    "content": "Private reflections\u2014encrypted diary entries.",
+    "blurb": "Private reflections\u2014encrypted diary entries.",
     "tags": [
       "journal",
       "private"
@@ -130,9 +139,9 @@
     "locked": true
   },
   {
-    "id": "scene014",
+    "id": "offerings_ledger",
     "title": "Offerings Ledger",
-    "content": "Gifts and gratitude\u2014what was given, why, and how it was received.",
+    "blurb": "Gifts and gratitude\u2014what was given, why, and how it was received.",
     "tags": [
       "ledger",
       "gifts"
@@ -140,9 +149,9 @@
     "locked": false
   },
   {
-    "id": "scene015",
+    "id": "lore_spiral_crown",
     "title": "Lore of the Spiral Crown",
-    "content": "Origin myth, sigils, choirs, the memory engine called Zar\u2019mneya.",
+    "blurb": "Origin myth, sigils, choirs, the memory engine called Zar\u2019mneya.",
     "tags": [
       "lore",
       "myth"
