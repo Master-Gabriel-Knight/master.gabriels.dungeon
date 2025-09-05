@@ -68,11 +68,28 @@ h1,h2{ text-shadow:0 0 10px rgba(255,30,138,.25) }
   <!-- Install a capture‑phase blocker for bare letters before any other scripts. This prevents legacy scripts from seeing reserved keys like 'b' and the letters of the passcode. -->
   <script>
   (function(){
+    // Reserved letters to suppress (those in the passcode and legacy shortcuts)
     const reserved = new Set(['b','m','g','p','!','i','r','e']);
     function isTyping(t){ return /^(input|textarea|select)$/i.test(t?.tagName||'') || (t && t.isContentEditable); }
+    // Determine if the event target lives inside the lock overlay. We allow all keys here
+    // so users can type the password and click the unlock button without interference.
+    function insideLock(t){
+      try {
+        let el = t;
+        while (el && el !== document) {
+          if (el.id === 'lock' || el.id === 'overlay-lock') return true;
+          if (typeof el.classList?.contains === 'function' && el.classList.contains('lock')) return true;
+          if (el.hasAttribute && (el.hasAttribute('data-lock') || el.getAttribute('data-lock') !== null)) return true;
+          el = el.parentNode;
+        }
+      } catch (err) {}
+      return false;
+    }
     function blocker(e){
       // ignore if any modifier is held
       if(e.altKey || e.ctrlKey || e.metaKey) return;
+      // ignore events inside the lock overlay (allow typing and unlocking)
+      if(insideLock(e.target)) return;
       // ignore inputs/contenteditables
       if(isTyping(e.target)) return;
       const k = (e.key || '').toLowerCase();

@@ -13,9 +13,29 @@ function isTypingTarget(t) {
   return /^(input|textarea|select)$/i.test(t?.tagName || '') || (t && t.isContentEditable);
 }
 
+// Determine if a target element lives inside the password/lock overlay. When true, we do
+// not block any keys so that unlocking via click or Enter still works. The lock overlay
+// may have id="lock" or "overlay-lock", or carry a 'lock' class or data-lock attribute.
+function insideLock(target) {
+  try {
+    let el = target;
+    while (el && el !== document) {
+      if (el.id === 'lock' || el.id === 'overlay-lock') return true;
+      if (typeof el.classList?.contains === 'function' && el.classList.contains('lock')) return true;
+      if (el.hasAttribute && (el.hasAttribute('data-lock') || el.getAttribute('data-lock') !== null)) return true;
+      el = el.parentNode;
+    }
+  } catch (_) {
+    /* noop */
+  }
+  return false;
+}
+
 function shouldBlock(e) {
   // Do not block if any modifier key is held; we only block bare letters
   if (e.altKey || e.ctrlKey || e.metaKey) return false;
+  // Allow all keys inside the lock overlay to permit typing the password and clicking Unlock
+  if (insideLock(e.target)) return false;
   if (isTypingTarget(e.target)) return false;
   const k = (e.key || '').toLowerCase();
   if (BARE_BLOCK.has(k)) return true;
