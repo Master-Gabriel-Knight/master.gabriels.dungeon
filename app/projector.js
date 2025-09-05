@@ -1,12 +1,11 @@
 
-let raf=null;
+function show(on){ const o=document.getElementById('projector-overlay'); if(o) o.style.display=on?'block':'none'; }
+function setText(t){ const el=document.getElementById('projector-text'); if (el){ el.textContent = t; } }
 export function bootstrapProjector(){
-  const open=document.getElementById('proj-open'); const box=document.getElementById('projector-overlay'); const close=document.getElementById('proj-close'); const text=document.getElementById('proj-text'); const follow=document.getElementById('proj-follow');
-  function content(){ return document.getElementById('script-view')?.textContent||''; }
-  function render(){ text.textContent = content(); }
-  function loop(){ if (follow?.checked){ const src=document.getElementById('tp-scroll'); if(src){ text.style.transform = src.style.transform; } } raf=requestAnimationFrame(loop); }
-  open?.addEventListener('click', ()=>{ render(); box.style.display='block'; cancelAnimationFrame(raf); loop(); });
-  close?.addEventListener('click', ()=>{ box.style.display='none'; cancelAnimationFrame(raf); });
-  document.getElementById('tp-open')?.addEventListener('click', render);
+  document.getElementById('proj-open')?.addEventListener('click', ()=> show(true));
+  document.getElementById('proj-close')?.addEventListener('click', ()=> show(false));
+  window.addEventListener('mgd:phase', e=> setText(e.detail));
+  window.addEventListener('mgd:cue', e=> setText(e.detail));
+  window.addEventListener('mgd:scriptStep', e=> setText(e.detail?.say||e.detail?.decree||' '));
 }
 document.addEventListener('DOMContentLoaded', bootstrapProjector);

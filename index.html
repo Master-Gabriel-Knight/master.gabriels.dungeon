@@ -1416,7 +1416,7 @@ decree &quot;I choose my shape.&quot;" style="width:100%;height:120px"></textare
     <label><input id="tp-contrast" type="checkbox"> High contrast</label>
     <button id="tp-start" class="navbtn">Start</button>
     <button id="tp-pause" class="navbtn">Pause</button>
-    <button id="tp-reset" class="navbtn">Reset</button> <label><input id="tp-autopace" type="checkbox"> Auto‑pace from waits</label> <label><input id="tp-gesture" type="checkbox"> Gesture pace</label> <button id="tp-prev" class="navbtn">Prev Chapter</button> <button id="tp-next" class="navbtn">Next Chapter</button> <label><input id="tp-autochap" type="checkbox"> Auto-chapter</label>
+    <button id="tp-reset" class="navbtn">Reset</button> <label><input id="tp-autopace" type="checkbox"> Auto‑pace from waits</label> <button id="tp-prev" class="navbtn">Prev Chapter</button> <button id="tp-next" class="navbtn">Next Chapter</button> <label><input id="tp-autochap" type="checkbox"> Auto-chapter</label>
   </div>
   <div id="tp-content" style="position:absolute;inset:0;top:64px;overflow:hidden">
     <div id="tp-scroll" style="position:absolute;left:0;right:0;top:0;white-space:pre-wrap;opacity:.96;padding:0 4vw;font-family:serif;line-height:1.4"></div>
@@ -1485,7 +1485,7 @@ decree &quot;I choose my shape.&quot;" style="width:100%;height:120px"></textare
 
 
 <section id="safety-pulse" style="margin:24px auto;max-width:980px;padding:12px;border:1px solid rgba(255,255,255,.15);border-radius:12px;background:rgba(0,0,0,.35)">
-  <h2 class="title" style="margin:0 0 6px">Safety Pulse — G/Y/R Check</h2> <button id="freeze-btn" class="btn" style="margin-left:8px;background:#500">Freeze</button>
+  <h2 class="title" style="margin:0 0 6px">Safety Pulse — G/Y/R Check</h2>
   <div class="row" style="gap:8px;flex-wrap:wrap;align-items:center">
     <label>Every <input id="sp-min" class="input" value="8" style="width:90px"> min</label>
     <button id="sp-start" class="btn">Start</button>
@@ -1649,7 +1649,7 @@ decree &quot;I choose my shape.&quot;" style="width:100%;height:120px"></textare
 
 
 <section id="transcript" style="margin:24px auto;max-width:980px;padding:12px;border:1px solid rgba(255,255,255,.15);border-radius:12px;background:rgba(0,0,0,.35)">
-  <h2 class="title" style="margin:0 0 6px">Session Transcript</h2> <button id="capsule-export" class="navbtn" style="margin-left:8px">Export Session Capsule (PDF)</button> <button id="portfolio-export" class="navbtn">Export Session Portfolio (PDF)</button> <label style="margin-left:8px" class="sub"><input id="capsule-redact" type="checkbox"> Redact names</label>
+  <h2 class="title" style="margin:0 0 6px">Session Transcript</h2>
   <div class="row" style="gap:8px;flex-wrap:wrap">
     <button id="tr-refresh" class="navbtn">Refresh</button>
     <button id="tr-clear" class="navbtn">Clear</button>
@@ -1665,7 +1665,7 @@ decree &quot;I choose my shape.&quot;" style="width:100%;height:120px"></textare
 <script type="module" src="app/transcript.js"></script>
 
 <section id="rooms" style="margin:24px auto;max-width:980px;padding:12px;border:1px solid rgba(255,255,255,.15);border-radius:12px;background:rgba(0,0,0,.35)">
-  <h2 class="title" style="margin:0 0 6px">Rooms Dashboard</h2> <button id="wb-open" class="navbtn" style="margin-left:8px">Facilitator Wallboard</button>
+  <h2 class="title" style="margin:0 0 6px">Rooms Dashboard</h2>
   <div class="row" style="gap:8px;flex-wrap:wrap;align-items:center">
     <input id="room-name" class="input" placeholder="Room name (e.g., Studio A)" style="min-width:220px">
     <button id="room-join" class="btn">Join Room</button>
@@ -1740,149 +1740,5 @@ decree &quot;I choose my shape.&quot;" style="width:100%;height:120px"></textare
 
 <script type="module" src="app/pedal.js"></script>
 <script type="module" src="app/offline.js"></script>
-
-<div id="wallboard-overlay" role="dialog" aria-modal="true" style="position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.92);z-index:10020">
-  <div class="dialog-card" style="max-width:980px;width:96%">
-    <h2 class="title" style="margin:0 0 6px">Facilitator Wallboard</h2>
-    <div class="row" style="gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:8px">
-      <input id="wb-rooms" class="input" placeholder="Comma-separated room names (e.g., Studio A, Studio B)" style="min-width:320px">
-      <button id="wb-start" class="btn">Start</button> <label class="sub" style="margin-left:8px"><input id="wb-sync" type="checkbox"> Use Sync channel</label>
-      <button id="wb-stop" class="btn secondary">Stop</button>
-      <button id="wb-close" class="btn secondary">Close</button>
-    </div>
-    <div id="wb-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px"></div>
-  </div>
-</div>
-
-
-<section id="badge-forge" style="margin:24px auto;max-width:980px;padding:12px;border:1px solid rgba(255,255,255,.15);border-radius:12px;background:rgba(0,0,0,.35)">
-  <h2 class="title" style="margin:0 0 6px">Badge Forge — Custom Achievements</h2>
-  <div class="row" style="gap:8px;flex-wrap:wrap;align-items:center">
-    <input id="bf-name" class="input" placeholder="Badge name (e.g., Breath Captain)">
-    <select id="bf-metric">
-      <option value="lore">Lore entries ≥ N</option>
-      <option value="pulse">Safety pulses ≥ N</option>
-      <option value="practice">Practice minutes ≥ N</option>
-      <option value="playlist">Playlist items ≥ N</option>
-    </select>
-    <input id="bf-N" class="input" placeholder="N" style="width:90px">
-    <input id="bf-emoji" class="input" placeholder="Emoji (e.g., 🌬️)" style="width:120px">
-    <button id="bf-add" class="btn">Add Badge</button>
-    <button id="bf-clear" class="btn secondary">Clear All</button>
-  </div>
-  <div id="bf-grid" style="margin-top:10px;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px"></div>
-</section>
-
-
-<section id="playlist-runner" style="margin:24px auto;max-width:980px;padding:12px;border:1px solid rgba(255,255,255,.15);border-radius:12px;background:rgba(0,0,0,.35)">
-  <h2 class="title" style="margin:0 0 6px">Scene Playlist Runner — Chain Teleprompter</h2>
-  <div class="row" style="gap:8px;flex-wrap:wrap;align-items:center">
-    <input id="plr-name" class="input" placeholder="Item label (e.g., Warmup)">
-    <input id="plr-min" class="input" placeholder="Minutes" style="width:100px">
-    <select id="plr-source"><option value="current">Use current script</option><option value="lore0">Use latest Lore</option></select>
-    <button id="plr-add" class="btn">Add</button>
-    <button id="plr-start" class="navbtn">Start Chain</button>
-    <button id="plr-clear" class="navbtn">Clear</button>
-  </div>
-  <ol id="plr-list" style="margin-top:10px"></ol>
-  <div id="plr-status" class="sub" style="opacity:.85;margin-top:6px">Idle.</div>
-</section>
-
-<script type="module" src="app/wallboard.js"></script>
-<script type="module" src="app/badge_forge.js"></script>
-<script type="module" src="app/capsule.js"></script>
-<script type="module" src="app/playlist_runner.js"></script>
-<script type="module" src="app/pulse_log.js"></script>
-
-<section id="privacy-capsule" style="margin:24px auto;max-width:980px;padding:12px;border:1px solid rgba(255,255,255,.15);border-radius:12px;background:rgba(0,0,0,.35)">
-  <h2 class="title" style="margin:0 0 6px">Privacy — Encrypted Session Capsule</h2>
-  <div class="row" style="gap:8px;flex-wrap:wrap;align-items:center">
-    <input id="pc-pass" class="input" type="password" placeholder="Passphrase">
-    <button id="pc-export" class="btn">Export Encrypted (.mgdc)</button>
-    <label class="navbtn" style="padding:6px 10px;cursor:pointer">Import<input id="pc-import" type="file" accept=".mgdc,application/octet-stream" style="display:none"></label>
-    <span id="pc-status" class="sub" style="opacity:.85">Idle.</span>
-  </div>
-</section>
-
-
-<section id="bazaar" style="margin:24px auto;max-width:980px;padding:12px;border:1px solid rgba(255,255,255,.15);border-radius:12px;background:rgba(0,0,0,.35)">
-  <h2 class="title" style="margin:0 0 6px">Ritual Bazaar — Curated Packs</h2>
-  <p class="sub" style="opacity:.85;margin:0 0 8px">Import one or more Community Packs. We compute a local trust score (offline heuristics) and let you install safely.</p>
-  <div class="row" style="gap:8px;flex-wrap:wrap;align-items:center">
-    <label class="navbtn" style="padding:6px 10px;cursor:pointer">Import Packs<input id="bz-import" type="file" accept="application/json" multiple style="display:none"></label>
-    <button id="bz-clear" class="navbtn">Clear List</button>
-  </div>
-  <div id="bz-grid" style="margin-top:10px;display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px"></div>
-</section>
-
-
-<section id="haptics" style="margin:24px auto;max-width:980px;padding:12px;border:1px solid rgba(255,255,255,.15);border-radius:12px;background:rgba(0,0,0,.35)">
-  <h2 class="title" style="margin:0 0 6px">Haptics Designer — Vibration Patterns</h2>
-  <div class="row" style="gap:8px;flex-wrap:wrap;align-items:center">
-    <label>Pulse Green <input id="hv-g" class="input" value="40,0,40"></label>
-    <label>Pulse Yellow <input id="hv-y" class="input" value="120,40,120"></label>
-    <label>Pulse Red <input id="hv-r" class="input" value="200,100,200,100,200"></label>
-    <label>Consent Prompt <input id="hv-c" class="input" value="60,60,60"></label>
-    <button id="hv-save" class="btn">Save</button>
-    <button id="hv-test" class="navbtn">Test All</button>
-  </div>
-  <p class="sub" style="opacity:.85">Patterns are comma-separated milliseconds. They’ll trigger on matching events if your device supports vibration.</p>
-</section>
-
-<script type="module" src="app/privacy_capsule.js"></script>
-<script type="module" src="app/wallboard_sync.js"></script>
-<script type="module" src="app/bazaar.js"></script>
-<script type="module" src="app/haptics.js"></script>
-
-<section id="curve" style="margin:24px auto;max-width:980px;padding:12px;border:1px solid rgba(255,255,255,.15);border-radius:12px;background:rgba(0,0,0,.35)">
-  <h2 class="title" style="margin:0 0 6px">Intensity Curve — Pace Shaper</h2>
-  <div class="row" style="gap:8px;flex-wrap:wrap;align-items:center">
-    <label>Minutes <input id="curve-min" class="input" value="15" style="width:100px"></label>
-    <label><input id="curve-apply" type="checkbox"> Apply to Teleprompter speed</label>
-    <button id="curve-clear" class="navbtn">Clear</button>
-    <button id="curve-save" class="btn">Save</button>
-    <button id="curve-load" class="navbtn">Load</button>
-  </div>
-  <canvas id="curve-canvas" width="980" height="220" style="display:block;width:100%;height:auto;margin-top:10px;border:1px dashed rgba(255,255,255,.2);border-radius:12px;background:#000"></canvas>
-  <p class="sub" style="opacity:.85;margin-top:6px">Tip: click to add points; drag to shape the curve. 0% (low) at bottom → 100% (high) at top. Time flows left→right.</p>
-</section>
-
-
-<section id="versions" style="margin:24px auto;max-width:980px;padding:12px;border:1px solid rgba(255,255,255,.15);border-radius:12px;background:rgba(0,0,0,.35)">
-  <h2 class="title" style="margin:0 0 6px">Script Versions — Snapshots & Diff</h2>
-  <div class="row" style="gap:8px;flex-wrap:wrap">
-    <button id="ver-save" class="btn">Save Version</button>
-    <button id="ver-manage" class="navbtn">Manage & Diff</button>
-  </div>
-  <div id="ver-overlay" role="dialog" aria-modal="true" style="position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.9);z-index:10022">
-    <div class="dialog-card" style="max-width:980px;width:96%">
-      <h3 style="margin:0 0 6px">Versions</h3>
-      <div id="ver-list" style="max-height:40vh;overflow:auto;border:1px solid rgba(255,255,255,.15);border-radius:8px;padding:6px"></div>
-      <div class="row" style="gap:8px;flex-wrap:wrap;margin-top:8px;align-items:center">
-        <label>Left <select id="ver-left"></select></label>
-        <label>Right <select id="ver-right"></select></label>
-        <button id="ver-diff" class="btn">Diff</button>
-        <button id="ver-restore" class="navbtn">Restore Right</button>
-        <button id="ver-close" class="btn secondary">Close</button>
-      </div>
-      <pre id="ver-view" style="white-space:pre-wrap;margin-top:8px;max-height:36vh;overflow:auto"></pre>
-    </div>
-  </div>
-</section>
-
-
-<div id="freeze-overlay" role="dialog" aria-modal="true" style="position:fixed;inset:0;display:none;background:#000;z-index:10030;display:none;align-items:center;justify-content:center;color:#fff">
-  <div style="text-align:center">
-    <h1 style="margin:0 0 10px;font-size:42px">Frozen — Take a Breath</h1>
-    <p class="sub" style="opacity:.85;margin:0 0 12px">All cues muted. Screens locked.</p>
-    <button id="freeze-off" class="btn">Unfreeze</button>
-  </div>
-</div>
-
-<script type="module" src="app/portfolio.js"></script>
-<script type="module" src="app/curve.js"></script>
-<script type="module" src="app/versions.js"></script>
-<script type="module" src="app/freeze.js"></script>
-<script type="module" src="app/gesture_pacer.js"></script>
 </body>
 </html>
