@@ -232,7 +232,48 @@ new:{l:"assets/images/bg_new_2560.webp",m:"assets/images/bg_new_1920.webp",s:"as
 waxing:{l:"assets/images/bg_waxing_2560.webp",m:"assets/images/bg_waxing_1920.webp",s:"assets/images/bg_waxing_1280.webp"},
 waning:{l:"assets/images/bg_waning_2560.webp",m:"assets/images/bg_waning_1920.webp",s:"assets/images/bg_waning_1280.webp"}};
 const RITUAL_OVERRIDES={ "hell_antechamber":{breathCycles:5,recitations:3,strokes:120}, "rites":{breathCycles:4,recitations:5,strokes:80} };
-let settings={mute:true, reduceMotion:false, theme:"dominant"};
+
+// Per-area tailored recitations
+const RECITATION_LINES = {
+  "welcome": ["I arrive sovereign.", "Consent leads me."],
+  "guests_of_guests": ["I am a guest and a guardian."],
+  "hell_antechamber": ["I learn through challenge, not harm.", "Severity bows to care."],
+  "wardrobe": ["I dress in my chosen vow."],
+  "rites": ["Service is a gift freely given."],
+  "implements": ["Tools obey consent and wisdom."],
+  "safewords_signals": ["Green, yellow, red — I listen.", "Breath speaks first."],
+  "museums": ["Beauty and pain demand ethics."],
+  "rabbit_hole": ["Curiosity keeps me kind."],
+  "worship_invitations": ["I honor the door and the threshold."],
+  "scenes_sparks": ["I kindle safely, I close gently."],
+  "aftercare_garden": ["Care lands like warm cloth.", "Sugar. Water. Quiet."],
+  "house_laws": ["Sovereign will. Grace-name. Inviolability."],
+  "confessional": ["Truth whispers where it is held."] ,
+  "offerings_ledger": ["Gratitude keeps accounts bright."],
+  "lore_spiral_crown": ["I turn the spiral with care."]
+};
+
+// Minimal fallback areas (used if data/memory.json fails to load)
+const FALLBACK_AREAS = [
+  {id:"welcome", title:"Welcome", blurb:"Begin with breath. Consent first, always.", tags:["intro"], locked:false},
+  {id:"guests_of_guests", title:"Guests of Guests", blurb:"Roster of entrants—oaths witnessed, signatures sealed.", tags:["guest","index"], locked:true},
+  {id:"hell_antechamber", title:"Hell Antechamber", blurb:"Punishments catalog—ordeals, lessons, graceful severity.", tags:["ritual","ordeal"], locked:true},
+  {id:"wardrobe", title:"Wardrobe of Surrender", blurb:"Leather, silk, chain, lace—each stitch a vow.", tags:["fashion","fetish"], locked:false},
+  {id:"rites", title:"Rites of Service", blurb:"Offerings, posture, breath, response. Consent-first liturgy.", tags:["ritual","service"], locked:true},
+  {id:"implements", title:"Implements", blurb:"Floggers, crops, cuffs, candles, clips—tools of sensation and meaning.", tags:["tools","discipline"], locked:true},
+  {id:"safewords_signals", title:"Safewords & Signals", blurb:"Green / Yellow / Red. Tap, snap, fist. Breath speaks first.", tags:["safety","protocol"], locked:false},
+  {id:"museums", title:"Museums of Pain & Beauty", blurb:"Reflections on historic implements—ethics, care, reverence.", tags:["essay","ethics"], locked:false},
+  {id:"rabbit_hole", title:"Rabbit Hole", blurb:"Spiral descent into exquisite obsession—notes and bookmarks.", tags:["links","curation"], locked:false},
+  {id:"worship_invitations", title:"Worship Invitations", blurb:"When the door opens: tone, attitude, attire.", tags:["invitation","etiquette"], locked:false},
+  {id:"scenes_sparks", title:"Scenes: Sparks", blurb:"Vignettes of electricity and surrender—short, suggestive, poetic.", tags:["scenes","poetry"], locked:true},
+  {id:"aftercare_garden", title:"Aftercare Garden", blurb:"Warmth, water, sugar, blankets, quiet. Holding becomes holy.", tags:["aftercare","care"], locked:false},
+  {id:"house_laws", title:"House Laws", blurb:"Inviolability, Sovereign Will, Grace-Name Bloom. Consent as flame.", tags:["law","protocol"], locked:false},
+  {id:"confessional", title:"Confessional", blurb:"Private reflections—encrypted diary entries.", tags:["journal","private"], locked:true},
+  {id:"offerings_ledger", title:"Offerings Ledger", blurb:"Gifts and gratitude—what was given, why, and how it was received.", tags:["ledger","gifts"], locked:false},
+  {id:"lore_spiral_crown", title:"Lore of the Spiral Crown", blurb:"Origin myth, sigils, choirs, the memory engine called Zar’mneya.", tags:["lore","myth"], locked:false}
+];
+
+let settings={mute:true, reduceMotion:false, theme:"dominant", showAdvanced:false};
 try{ settings=Object.assign(settings, JSON.parse(localStorage.getItem("settings")||"{}")); }catch(e){}
 let glyphTimer=null, whisper;
 const speak=(m)=>{ const n=document.getElementById("aria-live"); if(n) n.textContent=m; };
@@ -253,7 +294,11 @@ async function showLock(){ await setLockBackground(); const d=$("#lock"); d.styl
 function tryUnlock(){ const v=$("#pass").value.trim(); if(v!==PASSCODE){ speak("The veil does not part."); return; } unlock(); }
 async function unlock(){ vibrate([5,30,20,30,5]); stopWhisper(); $("#lock").style.display="none"; $("#shell").style.display="block"; $("#topbar").setAttribute("aria-hidden","false"); await setUnlockedBackground(); if(settings.reduceMotion) document.body.classList.add("reduce-motion"); else document.body.classList.remove("reduce-motion"); if(settings.theme==="submissive") document.body.classList.add("theme-submissive"); else if(settings.theme==="divine") document.body.classList.add("theme-divine"); glyphTimer = settings.reduceMotion ? null : spawnGlyphs(); renderAreas(); renderGlobalGallery(); loadSettingsUI(); }
 let AREA_INDEX=[];
-async function loadAreas(){ try{ const r=await fetch("data/memory.json",{cache:"no-store"}); AREA_INDEX = await r.json(); } catch(e){ AREA_INDEX=[]; } }
+async function loadAreas(){
+  try{ const r=await fetch("data/memory.json",{cache:"no-store"}); AREA_INDEX = await r.json(); }
+  catch(e){ AREA_INDEX = FALLBACK_AREAS.slice(); }
+  if(!Array.isArray(AREA_INDEX) || AREA_INDEX.length===0) AREA_INDEX = FALLBACK_AREAS.slice();
+}
 function isUnlocked(id){ return localStorage.getItem("areaUnlocked_"+id)==="1" || AREA_INDEX.find(a=>a.id===id)?.locked===false; }
 function relockAll(){ AREA_INDEX.forEach(a=> localStorage.removeItem("areaUnlocked_"+a.id)); renderAreas(); }
 function renderAreas(){ const root=$("#areas"); if(!root) return; root.innerHTML = AREA_INDEX.map(a=>{ const locked=!isUnlocked(a.id); return `<div class="area-card ${locked?'locked':''}" data-id="${a.id}" tabindex="0"><div class="title">${a.title}</div><div class="sub">${a.blurb||""}</div><div class="tags">${(a.tags||[]).join(", ")}</div>${locked?'<div class="area-lock-msg">Locked</div>':''}</div>`; }).join(""); $$(".area-card", root).forEach(card=>{ card.onclick=()=> openArea(card.dataset.id); card.onkeypress=(e)=>{ if(e.key==="Enter") openArea(card.dataset.id); }; }); }
@@ -264,7 +309,12 @@ $("#begin-ritual").onclick=()=>{ $("#ritual").scrollIntoView({behavior:"smooth"}
 function switchAreaTab(t){ $$(".area-navbtn").forEach(b=> b.classList.remove("active")); $$(`#area-tabs .area-navbtn`).find(b=>b.dataset.t===t)?.classList.add("active"); $("#area-lore").style.display=t==="lore"?"block":"none"; $("#area-gallery").style.display=t==="gallery"?"block":"none"; $("#area-mem").style.display=t==="mem"?"block":"none"; }
 $$(".area-navbtn").forEach(b=> b.onclick=()=> switchAreaTab(b.dataset.t));
 function getThresholds(areaId){ const base={breathCycles:3, recitations:3, strokes:60}; return Object.assign(base, RITUAL_OVERRIDES[areaId]||{}); }
-function setupRitual(areaId, th){ let breath=0, recite=0, strokes=0, running=false, paused=false, phase=0, timer=null; const phaseLabel=$("#phase"), orb=$("#orb"); const breathNeed=th.breathCycles, reciteNeed=th.recitations, strokeNeed=th.strokes; const update=()=>{ $("#breath-count").textContent=breath; $("#recite-count").textContent=recite; $("#stroke-count").textContent=strokes; $("#ritual-complete").disabled=!(breath>=breathNeed && recite>=reciteNeed && strokes>=strokeNeed); }; update(); function runBreath(){ running=true; paused=false; phase=0; sequence(); } function sequence(){ if(!running) return; const steps=[{label:"Inhale 4", dur:4000, scale:1.2},{label:"Hold 7", dur:7000, scale:1.25},{label:"Exhale 8", dur:8000, scale:0.9}]; const s=steps[phase%3]; phaseLabel.textContent=s.label; orb.style.transform=`scale(${s.scale})`; timer=setTimeout(()=>{ phase++; if(phase%3===0){ breath++; update(); if(breath>=breathNeed){ stopBreath(); return; } } if(!paused) sequence(); }, s.dur); } function stopBreath(){ running=false; clearTimeout(timer); phaseLabel.textContent="Ready"; orb.style.transform="scale(1)"; } $("#breath-start").onclick=()=>{ stopBreath(); runBreath(); }; $("#breath-stop").onclick=()=>{ stopBreath(); }; document.addEventListener("keydown", function space(e){ if($("#ritual").style.display!=="none" && e.code==="Space"){ e.preventDefault(); if(running){ paused=!paused; if(!paused) sequence(); } } }); $("#recite-mark").onclick=()=>{ recite++; vibrate(10); update(); }; const c=$("#micro-canvas"), ctx=c.getContext("2d"); ctx.strokeStyle="#ff66a3"; ctx.lineWidth=6; ctx.lineCap="round"; let drawing=false; c.addEventListener("mousedown", e=>{ drawing=true; draw(e); }); c.addEventListener("mousemove", draw); window.addEventListener("mouseup", ()=>{ drawing=false; ctx.beginPath(); }); c.addEventListener("touchstart", e=>{ drawing=true; draw(e); }, {passive:true}); c.addEventListener("touchmove", draw, {passive:true}); window.addEventListener("touchend", ()=>{ drawing=false; ctx.beginPath(); }); function draw(e){ if(!drawing) return; const r=c.getBoundingClientRect(); const x=(e.touches?e.touches[0].clientX:e.clientX)-r.left; const y=(e.touches?e.touches[0].clientY:e.clientY)-r.top; ctx.lineTo(x,y); ctx.stroke(); ctx.beginPath(); ctx.moveTo(x,y); strokes++; update(); } $("#ritual-complete").onclick=()=>{ if($("#ritual-complete").disabled) return; localStorage.setItem("areaUnlocked_"+areaId,"1"); speak("The chamber opens."); openArea(areaId); window.scrollTo({top:0, behavior:"smooth"}); }; }
+function setupRitual(areaId, th){ let breath=0, recite=0, strokes=0, running=false, paused=false, phase=0, timer=null; const phaseLabel=$("#phase"), orb=$("#orb"); const breathNeed=th.breathCycles, reciteNeed=th.recitations, strokeNeed=th.strokes;
+  const recitePhrases = RECITATION_LINES[areaId] || ["I breathe. I choose."];
+  const reciteHint = recitePhrases[0];
+  const reciteCard = document.querySelector("#recite-card .sub"); if(reciteCard) reciteCard.textContent = reciteHint;
+  let spaceHandler = null;
+  const update=()=>{ $("#breath-count").textContent=breath; $("#recite-count").textContent=recite; $("#stroke-count").textContent=strokes; $("#ritual-complete").disabled=!(breath>=breathNeed && recite>=reciteNeed && strokes>=strokeNeed); }; update(); function runBreath(){ running=true; paused=false; phase=0; sequence(); } function sequence(){ if(!running) return; const steps=[{label:"Inhale 4", dur:4000, scale:1.2},{label:"Hold 7", dur:7000, scale:1.25},{label:"Exhale 8", dur:8000, scale:0.9}]; const s=steps[phase%3]; phaseLabel.textContent=s.label; orb.style.transform=`scale(${s.scale})`; timer=setTimeout(()=>{ phase++; if(phase%3===0){ breath++; update(); if(breath>=breathNeed){ stopBreath(); return; } } if(!paused) sequence(); }, s.dur); } function stopBreath(){ running=false; clearTimeout(timer); phaseLabel.textContent="Ready"; orb.style.transform="scale(1)"; } $("#breath-start").onclick=()=>{ stopBreath(); runBreath(); }; $("#breath-stop").onclick=()=>{ stopBreath(); }; document.addEventListener("keydown", function space(e){ if($("#ritual").style.display!=="none" && e.code==="Space"){ e.preventDefault(); if(!running){ stopBreath(); runBreath(); } else { paused=!paused; if(!paused) sequence(); } } }); $("#recite-mark").onclick=()=>{ recite++; vibrate(10); update(); }; const c=$("#micro-canvas"), ctx=c.getContext("2d"); ctx.strokeStyle="#ff66a3"; ctx.lineWidth=6; ctx.lineCap="round"; let drawing=false; c.addEventListener("mousedown", e=>{ drawing=true; draw(e); }); c.addEventListener("mousemove", draw); window.addEventListener("mouseup", ()=>{ drawing=false; ctx.beginPath(); }); c.addEventListener("touchstart", e=>{ drawing=true; draw(e); }, {passive:true}); c.addEventListener("touchmove", draw, {passive:true}); window.addEventListener("touchend", ()=>{ drawing=false; ctx.beginPath(); }); function draw(e){ if(!drawing) return; const r=c.getBoundingClientRect(); const x=(e.touches?e.touches[0].clientX:e.clientX)-r.left; const y=(e.touches?e.touches[0].clientY:e.clientY)-r.top; ctx.lineTo(x,y); ctx.stroke(); ctx.beginPath(); ctx.moveTo(x,y); strokes++; update(); } $("#ritual-complete").onclick=()=>{ if($("#ritual-complete").disabled) return; localStorage.setItem("areaUnlocked_"+areaId,"1"); speak("Area unlocked: "+(currentArea?currentArea.title:areaId)); openArea(areaId); window.scrollTo({top:0, behavior:"smooth"}); }; }
 function renderAreaMemories(){ const key="memUser_"+currentArea.id; const list=JSON.parse(localStorage.getItem(key)||"[]"); $("#am-list").innerHTML=list.map(x=>`<div class="card"><strong>${x.title}</strong><div style="opacity:.9; margin-top:6px">${x.content||""}</div></div>`).join(""); $("#am-save").onclick=()=>{ const title=$("#am-title").value.trim(); const content=$("#am-content").value.trim(); if(!title){ speak("Title is required."); return; } const arr=JSON.parse(localStorage.getItem(key)||"[]"); arr.push({id:"u-"+Date.now(), title, content}); localStorage.setItem(key, JSON.stringify(arr)); $("#am-title").value=""; $("#am-content").value=""; renderAreaMemories(); }; }
 function getGalleryKeys(areaId=null){ if(areaId) return { user:`gallery_${areaId}`, order:`galleryOrder_${areaId}` }; return { user:"galleryUser", order:"galleryOrder" }; }
 function getGallery(areaId=null){ const k=getGalleryKeys(areaId).user; try{ return JSON.parse(localStorage.getItem(k)||"[]"); }catch(e){ return []; } }
@@ -276,7 +326,45 @@ function setupUpload(buttonEl, inputEl, rootEl, areaId=null){ buttonEl.onclick=(
 function renderGlobalGallery(){ const root=$("#gallery-user"); renderGalleryGrid(root, null); setupUpload($("#gallery-upload-btn"), $("#gallery-upload"), root, null); }
 function renderAreaGallery(){ const root=$("#area-gallery-grid"); renderGalleryGrid(root, currentArea.id); setupUpload($("#area-upload-btn"), $("#area-upload"), root, currentArea.id); }
 function loadSettingsUI(){ $("#set-mute").checked=!!settings.mute; $("#set-reduce").checked=!!settings.reduceMotion; $("#set-theme").value=settings.theme||"dominant"; $("#set-save").onclick=()=>{ settings.mute=$("#set-mute").checked; settings.reduceMotion=$("#set-reduce").checked; settings.theme=$("#set-theme").value; localStorage.setItem("settings", JSON.stringify(settings)); speak("Settings saved."); }; $("#reset-rituals").onclick=()=>{ AREA_INDEX.forEach(a=>{ localStorage.removeItem("areaUnlocked_"+a.id); }); speak("All areas relocked."); renderAreas(); $("#area-view").classList.remove("active"); $("#tab-sanctum").classList.add("active"); }; }
-window.addEventListener("DOMContentLoaded", async ()=>{ await loadAreas(); if(localStorage.getItem("rememberUnlocked")==="1"){ $("#shell").style.display="block"; $("#topbar").setAttribute("aria-hidden","false"); await setUnlockedBackground(); glyphTimer = settings.reduceMotion ? null : spawnGlyphs(); renderAreas(); renderGlobalGallery(); loadSettingsUI(); } else { showLock(); loadSettingsUI(); } $$(".navbtn").forEach(b=> b.onclick=()=>{ $$(".navbtn").forEach(x=>x.classList.remove("active")); b.classList.add("active"); $$(".tab").forEach(t=>t.classList.remove("active")); const id="tab-"+b.dataset.tab; $("#"+id).classList.add("active"); if(id==="tab-gallery"){ renderGlobalGallery(); } if(id==="tab-sanctum"){ renderAreas(); } window.scrollTo({top:0, behavior:"smooth"}); }); });
+window.addEventListener("DOMContentLoaded", async ()=>{
+  // attach access keys for main tabs
+  const navSanctum = document.querySelector('#nav .navbtn[data-tab="sanctum"]'); if(navSanctum) navSanctum.accessKey='s';
+  const navGallery = document.querySelector('#nav .navbtn[data-tab="gallery"]'); if(navGallery) navGallery.accessKey='g';
+  const navSettings = document.querySelector('#nav .navbtn[data-tab="settings"]'); if(navSettings) navSettings.accessKey='t';
+  // area tab access keys
+  document.querySelectorAll('#area-tabs .area-navbtn').forEach((b,i)=>{ b.accessKey = String(i+1); });
+  // declutter: optionally hide advanced sections
+  const ADV_IDS = [
+    'ritual-scribe','profile-manager','aftercare-settings','scene-composer','teach-overlay','teaching-toggle','theme-switcher','invocations','agreements','sanctum-map','sigil-studio','ceremony-overlay','harmony-overlay','journal-overlay','partner-overlay','shadow-overlay'
+  ];
+  function applyAdvancedToggle(){
+    ADV_IDS.forEach(id=>{ const el=document.getElementById(id); if(!el) return; el.style.display = settings.showAdvanced? (el.dataset.prevDisplay||'') : 'none'; });
+  }
+  // Create settings controls for export/import + toggle
+  const setCard = document.querySelector('#tab-settings .card');
+  if(setCard && !document.getElementById('export-all')){
+    const extra = document.createElement('div'); extra.className='row'; extra.style.marginTop='10px';
+    extra.innerHTML = `<label><input type="checkbox" id="set-advanced"> Show Advanced Tools</label>
+<button id="export-all" class="navbtn">Export Data</button>
+<label class="navbtn" style="padding:6px 10px;cursor:pointer">Import Data<input id="import-all" type="file" accept="application/json" style="display:none"></label>
+`;
+    setCard.appendChild(extra);
+    document.getElementById('set-advanced').checked = !!settings.showAdvanced;
+    document.getElementById('set-advanced').addEventListener('change', (e)=>{ settings.showAdvanced=e.target.checked; localStorage.setItem('settings', JSON.stringify(settings)); applyAdvancedToggle(); });
+    document.getElementById('export-all').addEventListener('click', ()=>{
+      const dump = {};
+      for(let i=0;i<localStorage.length;i++){ const k=localStorage.key(i); if(!k) continue; if(/^(gallery|galleryOrder|memUser_|areaUnlocked_|settings)/.test(k)) dump[k]=localStorage.getItem(k); }
+      const blob = new Blob([JSON.stringify(dump,null,2)], {type:'application/json'});
+      const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='mgd-export.json'; a.click(); URL.revokeObjectURL(a.href);
+    });
+    document.getElementById('import-all').addEventListener('change', (e)=>{
+      const f=e.target.files && e.target.files[0]; if(!f) return; const r=new FileReader();
+      r.onload=()=>{ try{ const data=JSON.parse(r.result); Object.keys(data).forEach(k=> localStorage.setItem(k, data[k])); speak('Import complete.'); renderAreas(); renderGlobalGallery(); if(currentArea) { renderAreaGallery(); renderAreaMemories(); } } catch(err){ speak('Import failed.'); } };
+      r.readAsText(f);
+    });
+  }
+  applyAdvancedToggle();
+ await loadAreas(); if(localStorage.getItem("rememberUnlocked")==="1"){ $("#shell").style.display="block"; $("#topbar").setAttribute("aria-hidden","false"); await setUnlockedBackground(); glyphTimer = settings.reduceMotion ? null : spawnGlyphs(); renderAreas(); renderGlobalGallery(); loadSettingsUI(); } else { showLock(); loadSettingsUI(); } $$(".navbtn").forEach(b=> b.onclick=()=>{ $$(".navbtn").forEach(x=>x.classList.remove("active")); b.classList.add("active"); $$(".tab").forEach(t=>t.classList.remove("active")); const id="tab-"+b.dataset.tab; $("#"+id).classList.add("active"); if(id==="tab-gallery"){ renderGlobalGallery(); } if(id==="tab-sanctum"){ renderAreas(); } window.scrollTo({top:0, behavior:"smooth"}); }); });
 </script>
 
 <!-- Teaching Mode UI -->
