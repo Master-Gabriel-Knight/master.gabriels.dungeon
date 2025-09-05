@@ -1,45 +1,36 @@
-// app/keymap.js — safe accesskeys only (no 'iremember' letters)
-const RESERVED = new Set(['i','r','e','m','b']); // letters in "iremember"
 
-export function scrubAccessKeys(root = document) {
-  root.querySelectorAll('[accesskey]').forEach(el => {
-    const k = (el.getAttribute('accesskey') || '').toLowerCase();
-    if (RESERVED.has(k)) el.removeAttribute('accesskey');
+const LS = { km:'mgd.keymap' };
+// Default keymap definitions. Leave breath, kink, guardian and panic unbound by default
+// so that no single-letter hotkeys interfere with typing or navigation.
+// Users may assign their own combos through the settings UI if desired.
+const DEFAULTS = { breath:'', kink:'', guardian:'', panic:'', palette:'cmd+k' };
+function save(map){ localStorage.setItem(LS.km, JSON.stringify(map)); }
+function load(){ try{ return JSON.parse(localStorage.getItem(LS.km)||'{}'); }catch(e){ return {}; } }
+function norm(s){ return (s||'').toLowerCase().replace(/\s+/g,''); }
+function match(e, combo){
+  const c = norm(combo);
+  if (c==='cmd+k' || c==='ctrl+k'){ return (e.metaKey||e.ctrlKey) && e.key.toLowerCase()==='k'; }
+  return !e.ctrlKey && !e.metaKey && !e.altKey && e.key.toLowerCase()===c;
+}
+function run(action){
+  if (action==='breath') document.getElementById('breath-start')?.click();
+  if (action==='kink'){ const x=document.getElementById('kink-enabled'); if (x){ x.checked=!x.checked; x.dispatchEvent(new Event('change')); } }
+  if (action==='guardian'){ const x=document.getElementById('guardian-enable'); if (x){ x.checked=!x.checked; x.dispatchEvent(new Event('change')); } }
+  if (action==='panic') document.getElementById('panic-stop')?.click();
+  if (action==='palette'){ const i=document.getElementById('cmd-input'); if(i){ const o=document.getElementById('cmd-overlay'); o.style.display='block'; i.focus(); } }
+}
+export function bootstrapKeymap(){
+  const saved = {...DEFAULTS, ...load()};
+  document.querySelectorAll('input.km').forEach(inp=>{
+    const act = inp.dataset.act; inp.value = saved[act];
   });
+  document.getElementById('km-save')?.addEventListener('click', ()=>{
+    const map={}; document.querySelectorAll('input.km').forEach(inp=> map[inp.dataset.act]=inp.value);
+    save(map); alert('Keymap saved.');
+  });
+  window.addEventListener('keydown', (e)=>{
+    const map = {...DEFAULTS, ...load()};
+    for (const [act, combo] of Object.entries(map)){ if (match(e, combo)){ e.preventDefault(); run(act); break; } }
+  }, true);
 }
-
-export function setAccessKeys() {
-  // main nav
-  document.querySelector('#nav-sanctum')?.setAttribute('accesskey', 's');
-  document.querySelector('#nav-gallery')?.setAttribute('accesskey', 'g');
-  document.querySelector('#nav-settings')?.setAttribute('accesskey', 't');
-
-  // area tabs
-  document.querySelector('[role="tab"][data-tab="lore"]')?.setAttribute('accesskey', '1');
-  document.querySelector('[role="tab"][data-tab="gallery"]')?.setAttribute('accesskey', '2');
-  document.querySelector('[role="tab"][data-tab="mem"]')?.setAttribute('accesskey', '3');
-
-  // ritual / area actions
-  document.getElementById('begin-ritual')?.setAttribute('accesskey', 'f'); // Flame
-  document.getElementById('ritual-complete')?.setAttribute('accesskey', 'l'); // compLete
-  document.getElementById('area-back')?.setAttribute('accesskey', 'z'); // back
-
-  // data ops
-  document.getElementById('btn-export')?.setAttribute('accesskey', 'x');
-  document.getElementById('btn-import')?.setAttribute('accesskey', 'o');
-
-  // galleries & memories
-  document.getElementById('global-add')?.setAttribute('accesskey', 'a');
-  document.getElementById('area-add')?.setAttribute('accesskey', 'a');
-  document.getElementById('area-mem-form')?.setAttribute('accesskey', 'a');
-  document.getElementById('global-show-hidden')?.setAttribute('accesskey', 'h');
-  document.getElementById('area-show-hidden')?.setAttribute('accesskey', 'h');
-}
-
-export function observeAndRefreshKeys(root = document.body) {
-  const refresh = () => { scrubAccessKeys(); setAccessKeys(); };
-  const mo = new MutationObserver(() => refresh());
-  mo.observe(root, { childList: true, subtree: true });
-  refresh();
-  return mo;
-}
+document.addEventListener('DOMContentLoaded', bootstrapKeymap);
