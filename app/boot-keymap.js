@@ -1,11 +1,10 @@
-// app/boot-keymap.js — wire up safe accesskeys and hotkey nuke
+// app/boot-keymap.js
 import { observeAndRefreshKeys } from './keymap.js';
 import { enableHotkeyNuke } from './hotkeys_nuke.js';
 
+// Arm blocker immediately (module executes in <head>)
+enableHotkeyNuke();
+
 window.addEventListener('DOMContentLoaded', () => {
-  // Kill legacy bare-letter shortcuts app-wide
-  enableHotkeyNuke();
-  // Apply and maintain safe accesskeys
-  observeAndRefreshKeys();
-  console.info('[Hotkeys] Safe Alt+ mapping applied; bare letters disabled.');
+  observeAndRefreshKeys(); // maintains safe Alt+ accesskeys as DOM changes
 });
