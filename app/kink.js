@@ -102,6 +102,9 @@ function markComplete(){
 }
 
 function openConsent(){
+  // One-time consent: if a sigil has been saved, skip opening the dialog forever on this device.
+  try { if (localStorage.getItem('mgd.consent.done') === '1') { alert('Consent already recorded on this device. You can still edit Aftercare notes in Settings.'); return; } } catch(e){}
+
   const ov = el('consent-overlay'); if (!ov) return;
   // Load existing
   const cfg = load(LS.consent, {green:'Yes', yellow:'Slow', red:'Stop', limits:'', desires:''});

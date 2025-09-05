@@ -22,7 +22,12 @@ export function bootstrapSigil(){
   document.getElementById('sigil-clear')?.addEventListener('click', ()=>{ ctx.fillStyle='#000'; ctx.fillRect(0,0,cv.width,cv.height); });
   document.getElementById('sigil-save')?.addEventListener('click', ()=>{
     const it={ title: (document.getElementById('sigil-title')?.value||'Untitled'), note: (document.getElementById('sigil-note')?.value||''), time: Date.now(), data: cv.toDataURL('image/png') };
-    const list=gallery(); list.unshift(it); saveGallery(list); drawGrid(); alert('Saved to Gallery.');
+    const list=gallery(); list.unshift(it); saveGallery(list); drawGrid();
+    if (!localStorage.getItem('mgd.consent.done')) {
+      localStorage.setItem('mgd.consent.done', '1');
+      try { document.getElementById('consent-overlay')?.setAttribute('aria-hidden', 'true'); document.getElementById('consent-overlay')?.style && (document.getElementById('consent-overlay').style.display='none'); } catch(e){}
+    }
+    alert('Saved to Gallery.');
   });
   document.getElementById('sigil-export')?.addEventListener('click', ()=>{ const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([JSON.stringify(gallery(),null,2)], {type:'application/json'})); a.download='mgd_sigil_gallery.json'; a.click(); });
   document.getElementById('sigil-import')?.addEventListener('change', (e)=>{ const f=e.target.files[0]; if(!f) return; const r=new FileReader(); r.onload=()=>{ try{ const add=JSON.parse(r.result)||[]; const merged = (gallery()).concat(add).slice(0,100); saveGallery(merged); drawGrid(); }catch(e){ alert('Invalid gallery file.'); } }; r.readAsText(f); });
