@@ -224,7 +224,8 @@ h1,h2{ text-shadow:0 0 10px rgba(255,30,138,.25) }
 </main>
 
 <script>
-const PASSCODE="masterisgod";
+// Update: Use a unified unlock word of power. This passcode is now set to "iremember".
+const PASSCODE="iremember";
 const GLYPHS="ᚠᚨᚱᛃᛟᚱᛁᛟᛞᚨᛉᛇᛞᚾᚷᚱᛊᛋᛏᛜᚱᛁᛝᛟᛞᚨᚷ";
 const BACKS={lock:{l:"assets/images/lock_2560.webp",m:"assets/images/lock_1920.webp",s:"assets/images/lock_1280.webp"},
 full:{l:"assets/images/bg_full_2560.webp",m:"assets/images/bg_full_1920.webp",s:"assets/images/bg_full_1280.webp"},
@@ -252,8 +253,90 @@ function stopWhisper(){ if(whisper){ whisper.pause(); whisper.currentTime=0; }}
 async function showLock(){ await setLockBackground(); const d=$("#lock"); d.style.display="flex"; $("#pass").value=""; $("#pass").focus(); $("#show-pass").onclick=()=>{ const s=$("#pass").type==="password"; $("#pass").type=s?"text":"password"; }; $("#unlock-btn").onclick=tryUnlock; $("#set-remember").checked = localStorage.getItem("rememberUnlocked")==="1"; $("#set-remember").onchange=(e)=>{ if(e.target.checked) localStorage.setItem("rememberUnlocked","1"); else localStorage.removeItem("rememberUnlocked"); }; startWhisper(); document.addEventListener("keydown", e=>{ if(e.key==="Enter") tryUnlock(); }); $("#mic-btn").onclick=()=>{ try{ const C=window.SpeechRecognition||window.webkitSpeechRecognition; if(!C) return speak("Voice not supported here."); const r=new C(); r.continuous=false; r.lang='en-US'; r.interimResults=false; r.maxAlternatives=1; r.onresult=ev=>{ const t=ev.results[0][0].transcript.trim().toLowerCase(); if(t.includes(PASSCODE)) unlock(); else speak("The lock does not recognize that utterance."); }; r.start(); }catch(e){ speak("Voice init failed."); } }; }
 function tryUnlock(){ const v=$("#pass").value.trim(); if(v!==PASSCODE){ speak("The veil does not part."); return; } unlock(); }
 async function unlock(){ vibrate([5,30,20,30,5]); stopWhisper(); $("#lock").style.display="none"; $("#shell").style.display="block"; $("#topbar").setAttribute("aria-hidden","false"); await setUnlockedBackground(); if(settings.reduceMotion) document.body.classList.add("reduce-motion"); else document.body.classList.remove("reduce-motion"); if(settings.theme==="submissive") document.body.classList.add("theme-submissive"); else if(settings.theme==="divine") document.body.classList.add("theme-divine"); glyphTimer = settings.reduceMotion ? null : spawnGlyphs(); renderAreas(); renderGlobalGallery(); loadSettingsUI(); }
+// Index of areas (chambers); will be populated from data/memory.json or fallback list below.
 let AREA_INDEX=[];
-async function loadAreas(){ try{ const r=await fetch("data/memory.json",{cache:"no-store"}); AREA_INDEX = await r.json(); } catch(e){ AREA_INDEX=[]; } }
+// Fallback data for AREA_INDEX. If fetching the JSON file fails (e.g. when opened via file://),
+// we use this built‑in list so the site still functions offline. Keep this synced with data/memory.json.
+const FALLBACK_AREAS = [
+  {
+    "id": "welcome",
+    "title": "Welcome",
+    "blurb": "Begin with breath. Consent first, always.",
+    "tags": [
+      "intro"
+    ],
+    "locked": false
+  },
+  {
+    "id": "guests_of_guests",
+    "title": "Guests of Guests",
+    "blurb": "Roster of entrants—oaths witnessed, signatures sealed.",
+    "tags": [
+      "guest",
+      "index"
+    ],
+    "locked": true
+  },
+  {
+    "id": "hell_antechamber",
+    "title": "Hell Antechamber",
+    "blurb": "Punishments catalog—ordeals, lessons, graceful severity.",
+    "tags": [
+      "ritual",
+      "ordeal"
+    ],
+    "locked": true
+  },
+  {
+    "id": "rites",
+    "title": "Rites",
+    "blurb": "Catalog of rituals—dances of blades, of breath, of wills.",
+    "tags": [
+      "ritual",
+      "ceremony"
+    ],
+    "locked": true
+  },
+  {
+    "id": "spirit_library",
+    "title": "Spirit Library",
+    "blurb": "Whispers & wails—stories etched in flesh and dream.",
+    "tags": [
+      "knowledge",
+      "lore"
+    ],
+    "locked": true
+  },
+  {
+    "id": "forge",
+    "title": "Forge of Imprints",
+    "blurb": "Impressions impressed—new sigils, new vows.",
+    "tags": [
+      "creation",
+      "sigil"
+    ],
+    "locked": true
+  },
+  {
+    "id": "deep_archive",
+    "title": "Deep Archive",
+    "blurb": "Memories committed—archive of all sessions and scenes.",
+    "tags": [
+      "memory",
+      "archive"
+    ],
+    "locked": true
+  }
+];
+async function loadAreas(){
+  try{
+    const r = await fetch("data/memory.json", {cache: "no-store"});
+    AREA_INDEX = await r.json();
+  } catch(e){
+    // If running from a local file or if the fetch fails, use the fallback list
+    AREA_INDEX = FALLBACK_AREAS.slice();
+  }
+}
 function isUnlocked(id){ return localStorage.getItem("areaUnlocked_"+id)==="1" || AREA_INDEX.find(a=>a.id===id)?.locked===false; }
 function relockAll(){ AREA_INDEX.forEach(a=> localStorage.removeItem("areaUnlocked_"+a.id)); renderAreas(); }
 function renderAreas(){ const root=$("#areas"); if(!root) return; root.innerHTML = AREA_INDEX.map(a=>{ const locked=!isUnlocked(a.id); return `<div class="area-card ${locked?'locked':''}" data-id="${a.id}" tabindex="0"><div class="title">${a.title}</div><div class="sub">${a.blurb||""}</div><div class="tags">${(a.tags||[]).join(", ")}</div>${locked?'<div class="area-lock-msg">Locked</div>':''}</div>`; }).join(""); $$(".area-card", root).forEach(card=>{ card.onclick=()=> openArea(card.dataset.id); card.onkeypress=(e)=>{ if(e.key==="Enter") openArea(card.dataset.id); }; }); }
